@@ -12,6 +12,11 @@ members = [
     "crates/swal-tools-web",
 ]
 
+[workspace.dependencies]
+gestalt_core = { git = "https://github.com/iberi22/gestalt.git", package = "gestalt_core" }
+synapse-agentic = { git = "https://github.com/iberi22/gestalt.git", package = "synapse-agentic" }
+gestalt-state = { git = "https://github.com/iberi22/gestalt.git", package = "gestalt-state" }
+
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
