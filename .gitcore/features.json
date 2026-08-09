@@ -147,19 +147,23 @@
       "description": "Async Provider trait (Message list → ProviderResponse w/ tool_calls) + ProviderError.",
       "wave": "wave1",
       "weight": 3,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-loop/src/provider.rs",
+      "tests": [
+        "test_serde_structures",
+        "test_mock_provider_deterministic"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-007"
       ],
       "user_stories": [
         "US-007"
       ],
-      "notes": ""
+      "notes": "PR #31 merged. Provider trait + ProviderResponse/ToolCall serde.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-mock-provider",
@@ -167,19 +171,22 @@
       "description": "Scripted deterministic provider for tests: canned responses incl. tool_calls. No network.",
       "wave": "wave1",
       "weight": 3,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-loop/src/provider.rs",
+      "tests": [
+        "test_mock_provider_deterministic"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-008"
       ],
       "user_stories": [
         "US-008"
       ],
-      "notes": ""
+      "notes": "PR #31 merged. MockProvider determinista con respuestas enlatadas.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-skills-loader",
@@ -187,19 +194,22 @@
       "description": "Load SKILL.md from filesystem, parse name/description frontmatter, body as content.",
       "wave": "wave1",
       "weight": 3,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-loop/src/skills.rs",
+      "tests": [
+        "test_load_skills_success"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-009"
       ],
       "user_stories": [
         "US-009"
       ],
-      "notes": ""
+      "notes": "PR #30 merged. SkillLoader parsea frontmatter name/description.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-skills-cache",
@@ -207,19 +217,23 @@
       "description": "Snapshot in memory + LRU hot cache; no re-read disk per turn.",
       "wave": "wave1",
       "weight": 3,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-loop/src/skills.rs",
+      "tests": [
+        "test_load_skills_cache_hit",
+        "test_skill_loader_lru_behavior"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-010"
       ],
       "user_stories": [
         "US-010"
       ],
-      "notes": ""
+      "notes": "PR #30 merged. Cache 2 capas snapshot+LRU.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-agent-loop",
