@@ -7,3 +7,10 @@ authors.workspace = true
 description = "Cron ticks + subagent spawn; tokio timers, rayon for CPU work"
 
 [dependencies]
+swal-loop = { path = "../swal-loop" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "time", "sync", "test-util"] }
+anyhow = "1.0"
+tracing = "0.1"
+async-trait = "0.1"
