@@ -24,8 +24,8 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | Grupo | Issues | Estado |
 |-------|--------|--------|
 | A | #1, #2, #3 | ✅ COMPLETO (PRs #13-15 merged) |
-| B | #4 scaffold loop | 🟢 EN CURSO (label jules, sesión 916725318302634590) |
-| C | #5 provider, #6 skills | ⏳ espera B |
+| B | #4 scaffold loop | ✅ COMPLETO (PR #29 merged, issue closed) |
+| C | #5 provider, #6 skills | 🟢 EN CURSO (dispatch simultáneo) |
 | D | #7 AgentLoop, #9 scaffold agent | ⏳ espera C |
 | E | #8 e2e, #10 cli+config, #11 session | ⏳ espera D |
 | F | #12 tools wiring final | ⏳ espera E |
