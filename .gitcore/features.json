@@ -1,6 +1,6 @@
 {
   "project": "swal-agent-rust",
-  "description": "Hermes harness clone in Rust — native CLI/TUI + WASM PWA. Reuses gestalt, synapse-agentic, xavier. Scope: 100% of features across 3 waves.",
+  "description": "Hermes harness clone in Rust — native CLI/TUI + WASM PWA. 37 features (13 W1 + 12 W2 + 12 W3) = 100%.",
   "gitcore_version": "3.8.0",
   "last_updated": "2026-08-09",
   "wave_weights": {
@@ -10,14 +10,14 @@
   },
   "features": [
     {
-      "id": "feat-workspace-foundation",
-      "title": "Workspace foundation: git deps + CI",
-      "description": "Root Cargo.toml with git dependencies (gestalt_core, synapse-agentic), CI workflow (fmt+clippy+test), compiling workspace skeleton.",
+      "id": "feat-git-deps",
+      "title": "Git deps (gestalt_core, synapse-agentic)",
+      "description": "Root workspace.dependencies with git deps to gestalt workspace members.",
       "wave": "wave1",
-      "weight": 5,
+      "weight": 3,
       "progress_pct": 100,
       "status": "stable",
-      "implemented_in": "Cargo.toml, .github/workflows/ci.yml",
+      "implemented_in": "Cargo.toml",
       "tests": [
         "ci.yml"
       ],
@@ -29,20 +29,19 @@
       "user_stories": [
         "US-001"
       ],
-      "notes": "Merged via PR #13. git deps + CI workflow verified.",
-      "last_updated": "2026-08-09"
+      "notes": "PR #13 merged"
     },
     {
-      "id": "feat-tool-registry",
-      "title": "swal-core Tool trait + ToolRegistry",
-      "description": "Platform-agnostic Tool trait (name, description, JSON-schema input, async execute) + ToolRegistry (DashMap register/list/execute). wasm32-clean: no tokio/fs/process.",
+      "id": "feat-ci-pipeline",
+      "title": "CI pipeline (fmt+clippy+test)",
+      "description": "GitHub Actions: cargo fmt --check, clippy -D warnings, test --workspace on push/PR.",
       "wave": "wave1",
-      "weight": 8,
+      "weight": 2,
       "progress_pct": 100,
       "status": "stable",
-      "implemented_in": "crates/swal-core/src/tool.rs, crates/swal-core/tests/tool_test.rs",
+      "implemented_in": ".github/workflows/ci.yml",
       "tests": [
-        "test_tool_registry_workflow"
+        "ci.yml"
       ],
       "last_tested": "2026-08-09",
       "passes": true,
@@ -52,20 +51,19 @@
       "user_stories": [
         "US-002"
       ],
-      "notes": "Merged via PR #15. Tool trait + ToolRegistry wasm32-clean.",
-      "last_updated": "2026-08-09"
+      "notes": "PR #13 merged"
     },
     {
-      "id": "feat-session-store",
-      "title": "swal-store Store trait + SessionStore (SQLite)",
-      "description": "Store trait (session CRUD) + SessionStore impl on rusqlite (WAL, data/swal-agent.db). Schema: sessions + messages. Shared serde types.",
+      "id": "feat-tool-trait",
+      "title": "Tool trait (wasm32-clean)",
+      "description": "Platform-agnostic Tool trait: name, description, JSON-schema input, async execute. No tokio/fs/process.",
       "wave": "wave1",
-      "weight": 8,
+      "weight": 4,
       "progress_pct": 100,
       "status": "stable",
-      "implemented_in": "crates/swal-store/src/session.rs, crates/swal-store/tests/session_test.rs",
+      "implemented_in": "crates/swal-core/src/tool.rs",
       "tests": [
-        "test_session_store_crud_roundtrip"
+        "test_tool_registry_workflow"
       ],
       "last_tested": "2026-08-09",
       "passes": true,
@@ -75,75 +73,80 @@
       "user_stories": [
         "US-003"
       ],
-      "notes": "Merged via PR #14. Store trait + SessionStore rusqlite WAL.",
-      "last_updated": "2026-08-09"
+      "notes": "PR #15 merged"
     },
     {
-      "id": "feat-agent-loop",
-      "title": "swal-loop AgentLoop (LLM→tools→feedback)",
-      "description": "Conversational agent loop: prompt → LLM → tool_calls → execute → feed back. Platform-agnostic core, drives gestalt ToolRegistry.",
+      "id": "feat-tool-registry",
+      "title": "ToolRegistry (DashMap)",
+      "description": "Register/list/execute tools via DashMap-backed registry in swal-core.",
       "wave": "wave1",
-      "weight": 12,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "weight": 4,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-core/src/tool.rs, crates/swal-core/tests/tool_test.rs",
+      "tests": [
+        "test_tool_registry_workflow"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-004"
       ],
       "user_stories": [
         "US-004"
       ],
-      "notes": ""
+      "notes": "PR #15 merged"
     },
     {
-      "id": "feat-llm-providers",
-      "title": "LLM providers: trait + MockProvider + synapse reuse",
-      "description": "Provider trait (async complete), MockProvider for tests, wiring to synapse-agentic providers (OpenRouter/DeepSeek/Gemini/Grok) via path-dep.",
+      "id": "feat-store-trait",
+      "title": "Store trait (session CRUD)",
+      "description": "Backend-agnostic Store trait: create/append/read/list/delete sessions.",
       "wave": "wave1",
-      "weight": 6,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "weight": 4,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-store/src/session.rs",
+      "tests": [
+        "test_session_store_crud_roundtrip"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-005"
       ],
       "user_stories": [
         "US-005"
       ],
-      "notes": ""
+      "notes": "PR #14 merged"
     },
     {
-      "id": "feat-skills-loader",
-      "title": "Skills loader (2-layer cache)",
-      "description": "Load skills from filesystem with 2-layer cache (LRU + snapshot), same patterns as Hermes skills. ~100 LOC file loader.",
+      "id": "feat-session-sqlite",
+      "title": "SessionStore SQLite (rusqlite WAL)",
+      "description": "SQLite backend: sessions+messages schema, WAL, bundled rusqlite, data/swal-agent.db.",
       "wave": "wave1",
-      "weight": 6,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "weight": 4,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-store/src/session.rs, crates/swal-store/tests/session_test.rs",
+      "tests": [
+        "test_session_store_crud_roundtrip"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-006"
       ],
       "user_stories": [
         "US-006"
       ],
-      "notes": ""
+      "notes": "PR #14 merged"
     },
     {
-      "id": "feat-cli-run",
-      "title": "swal-agent CLI: run command + config",
-      "description": "`swal-agent run \"task\"` executes the loop end-to-end. Config from file/env (model, provider, session dir). Session persistence wiring.",
+      "id": "feat-provider-trait",
+      "title": "LLM Provider trait (async)",
+      "description": "Async Provider trait (Message list → ProviderResponse w/ tool_calls) + ProviderError.",
       "wave": "wave1",
-      "weight": 6,
+      "weight": 3,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -159,11 +162,11 @@
       "notes": ""
     },
     {
-      "id": "feat-native-tools",
-      "title": "Native tools wiring (gestalt ToolRegistry)",
-      "description": "Wire gestalt tools (shell, read, write, git) into swal-loop via gestalt_core ToolRegistry. Reuse as-is, no reimplementation.",
+      "id": "feat-mock-provider",
+      "title": "MockProvider (deterministic)",
+      "description": "Scripted deterministic provider for tests: canned responses incl. tool_calls. No network.",
       "wave": "wave1",
-      "weight": 4,
+      "weight": 3,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -179,11 +182,11 @@
       "notes": ""
     },
     {
-      "id": "feat-gateway",
-      "title": "swal-gateway: HTTP/WS + MCP server",
-      "description": "Gateway exposes the loop remotely over HTTP/WS + MCP server. Telegram/Discord webhook→EventBus shims. External MCP client completes a task via gateway.",
-      "wave": "wave2",
-      "weight": 8,
+      "id": "feat-skills-loader",
+      "title": "Skills file loader (frontmatter)",
+      "description": "Load SKILL.md from filesystem, parse name/description frontmatter, body as content.",
+      "wave": "wave1",
+      "weight": 3,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -199,11 +202,11 @@
       "notes": ""
     },
     {
-      "id": "feat-mcp-client",
-      "title": "MCP client (rmcp) → xavier",
-      "description": "Hermes role is MCP client: swal-loop consumes MCP tools via rmcp. Gateway exposes it, loop consumes. External MCP tools callable from loop.",
-      "wave": "wave2",
-      "weight": 5,
+      "id": "feat-skills-cache",
+      "title": "Skills 2-layer cache (LRU+snapshot)",
+      "description": "Snapshot in memory + LRU hot cache; no re-read disk per turn.",
+      "wave": "wave1",
+      "weight": 3,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -219,11 +222,11 @@
       "notes": ""
     },
     {
-      "id": "feat-cron-scheduler",
-      "title": "swal-sched: cron ticks + subagent spawn",
-      "description": "Tokio cron loop (~100 LOC): scheduled prompts injected into loop, spawns subagent loops. Timer-based, not system cron.",
-      "wave": "wave2",
-      "weight": 4,
+      "id": "feat-agent-loop",
+      "title": "AgentLoop (LLM→tools→feedback)",
+      "description": "Conversational loop: prompt→LLM→tool_calls→execute→feedback until final or max_steps.",
+      "wave": "wave1",
+      "weight": 10,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -239,11 +242,11 @@
       "notes": ""
     },
     {
-      "id": "feat-subagents",
-      "title": "Subagents: isolated loop instances",
-      "description": "Subagent = isolated loop instance with same registry. Native: gestalt-router worktrees. wasm: WebWorkers. Per-agent context.",
-      "wave": "wave2",
-      "weight": 5,
+      "id": "feat-cli-run",
+      "title": "CLI run + config (env/file)",
+      "description": "swal-agent run \"task\" with config (model/provider/session dir) from CLI>env>defaults.",
+      "wave": "wave1",
+      "weight": 6,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -259,11 +262,11 @@
       "notes": ""
     },
     {
-      "id": "feat-compaction",
-      "title": "Compaction on long sessions (synapse-agentic)",
-      "description": "Context trimming via synapse-agentic compaction module when session exceeds threshold. Reuse, don't replicate.",
-      "wave": "wave2",
-      "weight": 4,
+      "id": "feat-native-tools",
+      "title": "Native tools wiring + session persist",
+      "description": "gestalt shell/read/write/git tools via adapter + session persistence wiring in CLI.",
+      "wave": "wave1",
+      "weight": 6,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -279,11 +282,11 @@
       "notes": ""
     },
     {
-      "id": "feat-xavier-memory",
-      "title": "Memory: xavier HTTP/MCP client round-trip",
-      "description": "Session search + store round-trip via xavier HTTP/MCP. Never embed xavier — client call only.",
+      "id": "feat-gateway-http",
+      "title": "Gateway HTTP server (axum)",
+      "description": "REST: GET /health, POST /run → runs loop, returns content+steps.",
       "wave": "wave2",
-      "weight": 4,
+      "weight": 3,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -299,11 +302,11 @@
       "notes": ""
     },
     {
-      "id": "feat-wasm-core",
-      "title": "swal-core wasm32-clean",
-      "description": "Agent loop + tools trait compiled to wasm32 without tokio/fs/process. Async via wasm-bindgen-futures. Same codebase as native loop.",
-      "wave": "wave3",
-      "weight": 3,
+      "id": "feat-gateway-ws",
+      "title": "Gateway WebSocket server",
+      "description": "WS: client sends task → streams result via AgentHandle.",
+      "wave": "wave2",
+      "weight": 2,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -319,10 +322,10 @@
       "notes": ""
     },
     {
-      "id": "feat-tools-web",
-      "title": "swal-tools-web: OPFS/WebContainers/isomorphic-git",
-      "description": "Web tool impls: git→isomorphic-git (JS interop), fs→OPFS, shell→WebContainers bridge. NO subprocess tool in web.",
-      "wave": "wave3",
+      "id": "feat-gateway-mcp-server",
+      "title": "Gateway MCP server (routes)",
+      "description": "MCP-style endpoints (tools/list, tools/call) exposing loop to MCP clients.",
+      "wave": "wave2",
       "weight": 3,
       "progress_pct": 0,
       "status": "planned",
@@ -339,10 +342,10 @@
       "notes": ""
     },
     {
-      "id": "feat-store-web",
-      "title": "swal-store: IndexedDB backend (rexie)",
-      "description": "Store trait + IndexedDB impl via rexie. Same shared serde schema as native rusqlite backend. Session persistence in browser.",
-      "wave": "wave3",
+      "id": "feat-mcp-client",
+      "title": "MCP client (JSON-RPC/rmcp)",
+      "description": "Loop as MCP client: connect, initialize, list_tools, call_tool.",
+      "wave": "wave2",
       "weight": 3,
       "progress_pct": 0,
       "status": "planned",
@@ -359,11 +362,11 @@
       "notes": ""
     },
     {
-      "id": "feat-pwa-leptos",
-      "title": "Leptos PWA + Comlink worker + WebLLM",
-      "description": "PWA dashboard (Leptos, single Rust codebase → WASM) reusing swal-core types. Comlink worker runs loop + WebLLM off main thread. WebLLM in-browser inference, same OpenAI-style API.",
-      "wave": "wave3",
-      "weight": 3,
+      "id": "feat-mcp-tools",
+      "title": "MCP tools in loop (external)",
+      "description": "External MCP server tools callable from AgentLoop via client.",
+      "wave": "wave2",
+      "weight": 2,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -379,11 +382,11 @@
       "notes": ""
     },
     {
-      "id": "feat-sync-crdt",
-      "title": "swal-sync: CRDT sync engine → EdgeMesh/xavier",
-      "description": "SyncEngine behind transport trait: native→EdgeMesh TCP/QUIC, web→WS/WebRTC relay. Same CRDT/merge logic. State syncs to xavier.",
-      "wave": "wave3",
-      "weight": 3,
+      "id": "feat-cron-ticker",
+      "title": "Cron ticker (tokio timers)",
+      "description": "Scheduler: interval-based task firing via tokio::time.",
+      "wave": "wave2",
+      "weight": 2,
       "progress_pct": 0,
       "status": "planned",
       "implemented_in": "",
@@ -395,6 +398,366 @@
       ],
       "user_stories": [
         "US-019"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-cron-tasks",
+      "title": "Scheduled tasks (RunTask)",
+      "description": "ScheduledTask list + RunTask trait decoupling scheduler from loop.",
+      "wave": "wave2",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-020"
+      ],
+      "user_stories": [
+        "US-020"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-subagent-spawn",
+      "title": "Subagent spawner (isolated)",
+      "description": "Spawn isolated loop instances; semaphore-bounded concurrency.",
+      "wave": "wave2",
+      "weight": 3,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-021"
+      ],
+      "user_stories": [
+        "US-021"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-subagent-isolation",
+      "title": "Subagent isolation (worktree)",
+      "description": "Native isolation via gestalt-router worktrees; web via WebWorkers.",
+      "wave": "wave2",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-022"
+      ],
+      "user_stories": [
+        "US-022"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-compaction",
+      "title": "Compaction (synapse reuse)",
+      "description": "Compact long contexts via synapse-agentic compaction; should_compact heuristic.",
+      "wave": "wave2",
+      "weight": 4,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-023"
+      ],
+      "user_stories": [
+        "US-023"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-xavier-store",
+      "title": "Xavier memory store (HTTP client)",
+      "description": "POST /v1/memories with X-Xavier-Token; XavierTransport trait.",
+      "wave": "wave2",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-024"
+      ],
+      "user_stories": [
+        "US-024"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-xavier-search",
+      "title": "Xavier memory search (round-trip)",
+      "description": "POST /v1/memories/search; store→search round-trip test.",
+      "wave": "wave2",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-025"
+      ],
+      "user_stories": [
+        "US-025"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-wasm-core-loop",
+      "title": "swal-core loop on wasm32",
+      "description": "Agent loop compiles to wasm32 without tokio/fs/process; async via wasm-bindgen-futures.",
+      "wave": "wave3",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-026"
+      ],
+      "user_stories": [
+        "US-026"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-wasm-core-tools",
+      "title": "Tool trait on wasm32",
+      "description": "Platform-agnostic Tool trait verified building for wasm32 target.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-027"
+      ],
+      "user_stories": [
+        "US-027"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-tools-opfs",
+      "title": "Web fs tools (OPFS)",
+      "description": "File tools backed by Origin Private File System (JS interop).",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-028"
+      ],
+      "user_stories": [
+        "US-028"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-tools-git-web",
+      "title": "Web git tools (isomorphic-git)",
+      "description": "Git tools via isomorphic-git JS interop (no git2 in browser).",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-029"
+      ],
+      "user_stories": [
+        "US-029"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-tools-shell-web",
+      "title": "Web shell (WebContainers)",
+      "description": "Shell tool via WebContainers bridge; NO subprocess in web.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-030"
+      ],
+      "user_stories": [
+        "US-030"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-store-indexeddb",
+      "title": "IndexedDB store backend (rexie)",
+      "description": "Store trait impl on IndexedDB via rexie; same serde schema.",
+      "wave": "wave3",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-031"
+      ],
+      "user_stories": [
+        "US-031"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-store-schema-shared",
+      "title": "Shared serde schema (native+web)",
+      "description": "One session/message schema shared by rusqlite and IndexedDB backends.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-032"
+      ],
+      "user_stories": [
+        "US-032"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-pwa-leptos",
+      "title": "Leptos PWA dashboard",
+      "description": "Leptos PWA reusing swal-core types; single Rust codebase → WASM.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-033"
+      ],
+      "user_stories": [
+        "US-033"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-pwa-comlink",
+      "title": "Comlink worker (loop off main)",
+      "description": "Agent loop + WebLLM run in Comlink worker off the main thread.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-034"
+      ],
+      "user_stories": [
+        "US-034"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-pwa-webllm",
+      "title": "WebLLM in-browser inference",
+      "description": "WebLLM (MLC-LLM→WASM+WebGPU) OpenAI-style API; remote fallback.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-035"
+      ],
+      "user_stories": [
+        "US-035"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-sync-crdt",
+      "title": "CRDT sync engine",
+      "description": "SyncEngine with same CRDT/merge logic across native and web.",
+      "wave": "wave3",
+      "weight": 2,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-036"
+      ],
+      "user_stories": [
+        "US-036"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "feat-sync-transport",
+      "title": "Sync transport (EdgeMesh/WS)",
+      "description": "Transport trait: native→EdgeMesh TCP/QUIC; web→WS/WebRTC relay to xavier.",
+      "wave": "wave3",
+      "weight": 1,
+      "progress_pct": 0,
+      "status": "planned",
+      "implemented_in": "",
+      "tests": [],
+      "last_tested": "",
+      "passes": false,
+      "req_ids": [
+        "REQ-037"
+      ],
+      "user_stories": [
+        "US-037"
       ],
       "notes": ""
     }
