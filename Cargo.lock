@@ -5007,6 +5007,15 @@ dependencies = [
 [[package]]
 name = "swal-sched"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "serde",
+ "serde_json",
+ "swal-loop",
+ "tokio",
+ "tracing",
+]
 
 [[package]]
 name = "swal-store"
