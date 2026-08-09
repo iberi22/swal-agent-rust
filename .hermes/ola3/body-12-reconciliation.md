@@ -15,9 +15,10 @@
   - "Run" button → `worker::run_task(task)` → display result
   - Session list from `swal_store::indexeddb::IndexedDbStore` (wasm) — best-effort, warn on error
 - **`crates/swal-pwa/index.html`** (NEW): minimal PWA shell (manifest link, service worker registration optional)
-- **`.gitcore/features.json`** (reconciliation, orchestrator-owned — ONLY wave-3 issue allowed to touch it):
-  - Set wave3 features to final honest % based on what merged (wasm-core-loop=100 if wasm build passed, tools-opfs/git-web/shell-web=100 if impl merged, store-indexeddb=100, sync-crdt=100, sync-transport=100, pwa-leptos/comlink/webllm=100 or partial)
-  - Update `last_updated`
+- **`.gitcore/features.json`**: ⚠️ NO EDITAR — el cron `swal-agent-rust-features-persist`
+  lo actualiza automáticamente con el % real. Este issue SOLO verifica que el cron
+  refleje los merges (puede correr `python3 ~/.hermes/scripts/swal-agent-rust-features.py --force`
+  para forzar el scan, pero no editar el JSON a mano).
 - Verify: `cargo check --workspace` + full test suite green + wasm32 build of swal-core.
 
 ## 🌐 Web Research Required

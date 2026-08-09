@@ -15,9 +15,10 @@
   - `swal-agent serve --addr 127.0.0.1:8080`: builds the loop (same as `run`) → starts `swal_gateway::http::serve` + optional `swal_sched::ticker::Scheduler` with tasks from config
   - Wiring is thin: construct loop once, pass `Arc` to gateway + sched
 - **`crates/swal-agent/Cargo.toml`**: add `swal-gateway` + `swal-sched` path deps — ⚠️ this manifest is owned by Ola 1 #09; if adding deps conflicts, comment on this issue instead of editing (or the orchestrator pre-approved: see Anti-Hallucination Guard #5)
-- **`.gitcore/features.json`** (reconciliation, orchestrator-owned — the ONLY issue that may touch it):
-  - Set wave2 features to their final % based on what actually merged: gateway=100 if E2E passed, mcp-client=100, xavier-memory=100, cron-scheduler=100, subagents=100, compaction=100 (or the honest % if partial)
-  - Update `last_updated`
+- **`.gitcore/features.json`**: ⚠️ NO EDITAR — el cron `swal-agent-rust-features-persist`
+  lo actualiza automáticamente con el % real. Este issue SOLO verifica que el cron
+  refleje los merges (puede correr `python3 ~/.hermes/scripts/swal-agent-rust-features.py --force`
+  para forzar el scan, pero no editar el JSON a mano).
 - Verify `cargo check --workspace` + full test suite green.
 
 ## 🌐 Web Research Required

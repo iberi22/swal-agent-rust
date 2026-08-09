@@ -30,19 +30,21 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | E | #8 e2e, #10 cli+config, #11 session | ✅ COMPLETO (PRs #34-36 merged) |
 | F | #12 tools wiring final | 🟢 EN CURSO |
 
-## DISEÑO DE WAVES ≥5 TAREAS SIMULTÁNEAS (a partir de Ola 2)
-Patrón: scaffolds primero (pocos, crean lib.rs + stubs compilables) → MEGA-GRUPO
-de implementación (5+ issues que reemplazan stubs en archivos DISJUNTOS) →
-reconciliación final. Así Jules trabaja mínimo 5 issues a la vez sin conflictos.
+## DISEÑO DE WAVES 6-8 TAREAS SIMULTÁNEAS (capacidad Jules: 15)
+Patrón: scaffolds primero (crean lib.rs + stubs compilables) → MEGA-GRUPOS de
+implementación (6-8 issues que reemplazan stubs en archivos DISJUNTOS) →
+integradores → reconciliación. Así Jules trabaja 6-8 issues a la vez sin conflictos.
 
-| Ola | Scaffolds (paralelos) | MEGA-GRUPO (simultáneos) | Final |
-|-----|----------------------|--------------------------|-------|
-| Ola 1 | A(3): #1#2#3 · B: #4 · D: #9 | C(2): #5#6 · D(2): #7 · E(3): #8#10#11 | F: #12 |
-| Ola 2 | G(3): #17#22#24 | **M(7): #18#19#20#23#25#26#27** | J:#21 · K:#28 |
-| Ola 3 | L(4): #37#39#44#46 | **N(7): #38#40#41#42#43#45#47** | O:#48 |
+| Wave | Issues | Tamaño | Contenido |
+|------|--------|--------|-----------|
+| W1 | #17 #22 #24 #37 #39 #44 #46 | **7** | scaffolds mixtos Olas 2+3: gateway, sched, loop-services, core-wasm, tools-web, sync, pwa (crates disjuntos) |
+| W2 | #18 #19 #20 #23 #25 #26 #27 | **7** | impls Ola 2: gateway http/ws/mcp + subagents + mcp-client + xavier + compaction |
+| W3 | #38 #40 #41 #42 #43 #45 | **6** | impls Ola 3: wasm-loop, opfs, git, shell, indexeddb, transport (worker #47 → W4) |
+| W4 | #21 #47 | 2 | integradores: gateway e2e + pwa worker |
+| W5 | #28 #48 | 2 | reconciliaciones (features.json lo gestiona el cron — issues SOLO wiring) |
 
-Regla: label jules se aplica a TODO el mega-grupo simultáneamente (7 issues)
-solo cuando el grupo de scaffolds está completamente closed.
+Regla: label jules se aplica a TODO el grupo simultáneamente solo cuando el
+grupo anterior está completamente closed. features.json NO se edita en issues.
 
 ## Monitoreo activo (2 jobs cada 20 min)
 1. `swal-agent-rust-features-persist` (0d384e5087f3, no_agent): escanea % real,
