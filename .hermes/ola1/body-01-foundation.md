@@ -1,104 +1,78 @@
-# [Ola 1.01] foundation — deps, swal-core Tool trait, swal-store sessions, CI
+# [Ola 1.01] Foundation — git deps + CI workflow
 
 > Ola 1 — Foundation. Labels: `ola1`, `wave-1` (NO `jules` yet).
+> Epic: https://github.com/iberi22/swal-agent-rust (100% feature scope).
 
 ---
 
 ## Current State (MEASURABLE)
-- Workspace: `Cargo.toml` root with 9 empty crate skeletons (compiles in 0.18s), no dependencies.
-- `crates/swal-core/src/lib.rs` — 3-line doc comment only (no `Tool` trait).
-- `crates/swal-store/src/lib.rs` — empty; no `Store` trait, no session schema, no rusqlite.
+- Root `Cargo.toml`: workspace-only, 9 empty crate skeletons, no `[workspace.dependencies]`, compiles in 0.18s.
+- `gestalt` repo (public, `https://github.com/iberi22/gestalt.git`, HEAD `a5d9608`) is a workspace containing `gestalt_core`, `gestalt_state`... (`gestalt-state`), `synapse-agentic`, `gestalt-router`, etc.
+- `synapse-agentic` is a MEMBER of the gestalt workspace — do NOT add a separate git dep.
 - No `.github/` directory, no CI workflow.
+- `.gitcore/features.json` exists: `feat-workspace-foundation` at 30%.
 
 ## Desired State (DELTA)
-- **Root `Cargo.toml`**: add git dependencies usable by all crates:
+- **Root `Cargo.toml`**: add `[workspace.dependencies]`:
   - `gestalt_core = { git = "https://github.com/iberi22/gestalt.git", package = "gestalt_core" }`
-  - `synapse-agentic = { git = "https://github.com/iberi22/synapse-agentic.git" }`
-  (both public repos — do NOT vendor or copy code from them).
-- **`crates/swal-core`**: add `Tool` trait (name, description, input JSON-Schema via `schemars`, async `execute` returning `ToolResult`), plus `ToolRegistry` (DashMap-based, register/list/execute). Platform-agnostic: NO tokio/fs/process imports.
-- **`crates/swal-store`**: add `Store` trait (session CRUD) + `SessionStore` impl on rusqlite (SQLite file at `data/swal-agent.db`, WAL). Schema: `sessions(id TEXT PK, created_at INTEGER, updated_at INTEGER, summary TEXT)` and `messages(id INTEGER PK AUTOINCREMENT, session_id TEXT, role TEXT, content TEXT, ts INTEGER)`. Shared serde types.
-- **`.github/workflows/ci.yml`**: on push/PR to main — `cargo fmt --all --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test --workspace`.
-- **New test**: `crates/swal-store/tests/session_test.rs` — create/append/read/delete session round-trip.
+  - `synapse-agentic = { git = "https://github.com/iberi22/gestalt.git", package = "synapse-agentic" }`
+  - `gestalt-state = { git = "https://github.com/iberi22/gestalt.git", package = "gestalt-state" }`
+  (verify exact member crate names by cloning gestalt and reading its workspace `members`)
+- **`.github/workflows/ci.yml`** (NEW): on push/PR to `main` — `cargo fmt --all --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test --workspace`. `CARGO_TARGET_DIR` not needed (default).
 
 ## 🌐 Web Research Required
-1. search: "rusqlite Connection methods insert querying 2026"
-2. search: "schemars JsonSchema derive struct enum"
-3. search: "cargo git dependency workspace package rename"
-4. search: "github actions rust workflow cargo fmt clippy test"
+1. search: "cargo git dependency workspace package rename 2026"
+2. search: "github actions rust workflow cargo fmt clippy test 2026"
+3. search: "cargo workspace.dependencies inherit git"
 
-## 🔬 Agent Session Prompt
-"Before implementing:
-1. Read `docs/ARCHITECTURE.md` and `docs/REUSE-MAP.md` in this repo — the role of swal-core and swal-store is defined there.
-2. Read `crates/swal-core/Cargo.toml` and `crates/swal-store/Cargo.toml` skeletons.
-3. Check latest rusqlite/schemars versions on crates.io before pinning.
-4. Document findings, then implement."
-
-## Existing Code Patterns
-- Empty crate skeleton pattern: each crate has its own `Cargo.toml` using `version.workspace = true` etc.
-- Root `Cargo.toml` already defines `[profile.release]` with `lto = "thin"` — do not change profiles.
-- Commit style: `type(scope): summary`.
+## Problem
+The workspace has no shared dependency graph and no CI. Every Ola-1 crate needs `gestalt_core`/`synapse-agentic` via git deps, and every PR needs automated fmt/clippy/test verification.
 
 ## Acceptance Criteria (COMMAND-VERIFIABLE)
-- [ ] `cargo check --workspace` — 0 errors
-- [ ] `cargo test -p swal-store 2>&1 | grep "test result: ok"` — 1 match
-- [ ] `grep -c "pub trait Tool" crates/swal-core/src/tool.rs` >= 1
-- [ ] `grep -c "pub struct SessionStore" crates/swal-store/src/session.rs` >= 1
+- [ ] `grep -c "gestalt_core" Cargo.toml` >= 1 (in `[workspace.dependencies]`)
+- [ ] `grep -c "synapse-agentic" Cargo.toml` >= 1
 - [ ] `ls .github/workflows/ci.yml` — exists
-- [ ] `git show HEAD --name-only | grep -cE "crates/(swal-core|swal-store)/src"` >= 2 (real source, not just manifests)
+- [ ] `grep -c "cargo clippy" .github/workflows/ci.yml` >= 1
+- [ ] `cargo check --workspace` — 0 errors
 
 ## Files to Modify
 | File | Current State | Change | Risk |
 |------|--------------|--------|------|
-| `Cargo.toml` | workspace only | Add `[workspace.dependencies]` git deps (gestalt_core, synapse-agentic) | MED |
-| `crates/swal-core/Cargo.toml` | no deps | Add serde, serde_json, schemars, dashmap, async-trait | LOW |
-| `crates/swal-core/src/lib.rs` | doc only | Export `tool` module | LOW |
-| `crates/swal-core/src/tool.rs` | — | NEW: `Tool` trait + `ToolRegistry` | LOW |
-| `crates/swal-store/Cargo.toml` | no deps | Add rusqlite (bundled feature), serde, chrono | LOW |
-| `crates/swal-store/src/lib.rs` | doc only | Export `session` module | LOW |
-| `crates/swal-store/src/session.rs` | — | NEW: `Store` trait + `SessionStore` (rusqlite, WAL) | MED |
-| `crates/swal-store/tests/session_test.rs` | — | NEW: CRUD round-trip test | LOW |
-| `.github/workflows/ci.yml` | — | NEW: fmt+clippy+test workflow | LOW |
+| `Cargo.toml` | workspace + profiles only | Add `[workspace.dependencies]` with 3 git deps | MED |
+| `.github/workflows/ci.yml` | — | NEW: fmt+clippy+test on push/PR | LOW |
 
 ## DO NOT touch (Anti-Regression)
-- `docs/ARCHITECTURE.md`, `docs/REUSE-MAP.md`, `docs/PLAN.md`, `README.md` — canonical, owned by orchestrator
-- `crates/swal-loop/`, `crates/swal-agent/`, `crates/swal-gateway/`, `crates/swal-sched/` — other file islands
-- The three OTHER empty web crates (swal-sync, swal-tools-native, swal-tools-web) — Wave 3
-- Root `[profile.*]` sections in `Cargo.toml`
+- `docs/`, `README.md`, `HANDOFF.md`, `.gitcore/features.json` — orchestrator-owned
+- Any `crates/*/` file or manifest (their Cargo.toml deps come in later issues)
+- Root `[profile.*]` sections (lto=thin, strip, dev-fast must stay)
 
 ## Anti-Hallucination Guard ⚠️
-1. **READ before write**: read each file completely before modifying (files are tiny skeletons).
-2. **Git deps, NOT vendored code**: use `git = "https://github.com/iberi22/..."` — copying gestalt/synapse-agentic code into this repo is a FAILURE.
-3. **No invented APIs**: verify rusqlite method names against docs.rs before using them.
-4. **rusqlite bundled**: use `rusqlite = { version = "...", features = ["bundled"] }` so SQLite compiles without system lib.
-5. **No tokio in swal-core**: this crate must compile to wasm32 later — no std::process, no tokio runtime.
-6. **Tests must not need network or API keys.**
-7. Empty PRs are forbidden — verify `git diff --stat HEAD` before push.
+1. **Verify crate names BEFORE writing deps**: `git clone --depth 1 https://github.com/iberi22/gestalt.git /tmp/g` then read `/tmp/g/Cargo.toml` `members` — use the EXACT package names found there.
+2. **synapse-agentic is inside gestalt** — never add `https://github.com/iberi22/synapse-agentic.git` (it may exist but is NOT the canonical source).
+3. Do NOT add `[workspace.dependencies]` entries for crates not verified to exist.
+4. CI file must be valid YAML — no tabs.
 
 ## PR Delivery Requirements (ANTI-EMPTY-PR)
-- [ ] `git status --porcelain` shows the new/modified files BEFORE opening the PR
-- [ ] `git diff --stat HEAD` lists the files (NOT empty)
-- [ ] The PR MUST contain >= 1 source file: verify with `git ls-files` before push
-- [ ] If the work could not be completed: DO NOT open a PR — comment the blocker on the issue
+- [ ] `git status --porcelain` shows Cargo.toml modified + ci.yml created BEFORE PR
+- [ ] PR contains >= 1 real file (ci.yml)
+- [ ] If blocked: comment the blocker on the issue, do NOT open an empty PR
 
 ## Verification
 ```bash
-cargo check --workspace
-cargo test -p swal-store 2>&1 | grep "test result: ok"
-cargo fmt --all --check
-cargo clippy --all-targets -- -D warnings
+cargo check --workspace 2>&1 | tail -3
+git diff --stat HEAD
 ```
 
 ## Dependencies & Merge Order
 - **Depends on:** none
 - **Blocked by:** none
-- **Parallel with:** none (this is the foundation)
-- **Merge order within wave:** 1 of 3
-- **Expected effort:** Medium (1-4h)
+- **Parallel with:** none (foundation — everything else needs these deps)
+- **Merge order within wave:** 1 of 12
+- **Expected effort:** Small (<1h)
 
 ## Failure Recovery
 | If this happens | Action |
 |----------------|--------|
-| `cargo check` fails on git deps | `cargo update` then retry; if gestalt_core doesn't compile standalone, pin a commit via `rev = "<sha>"` |
-| rusqlite bundled build fails | Ensure `cc`/`cmake` available; on NixOS use `nix-shell -p openssl.dev pkg-config` |
-| Test fails | Fix test logic or implementation |
-| PR conflicts with parallel work | Rebase on main, re-run verification |
+| git dep resolution fails | `cargo update`; verify package name exists in gestalt workspace members |
+| CI YAML invalid | Validate locally with `python3 -c "import yaml,sys; yaml.safe_load(open('.github/workflows/ci.yml'))"` |
+| cargo check slow on first git fetch | Expected — deps compile once, ~2-5 min |
