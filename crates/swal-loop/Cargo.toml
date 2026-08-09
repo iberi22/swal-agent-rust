@@ -7,3 +7,11 @@ authors.workspace = true
 description = "Conversational agent loop: prompt → LLM → tool_calls → execute → feedback"
 
 [dependencies]
+swal-core = { path = "../swal-core" }
+gestalt_core = { workspace = true }
+synapse-agentic = { workspace = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+async-trait = "0.1"
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "time"] }
+thiserror = "1.0"
