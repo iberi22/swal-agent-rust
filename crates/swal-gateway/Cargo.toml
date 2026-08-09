@@ -7,3 +7,11 @@ authors.workspace = true
 description = "HTTP/WS + MCP gateway exposing the agent loop; MCP client to xavier"
 
 [dependencies]
+swal-loop = { path = "../swal-loop" }
+swal-core = { path = "../swal-core" }
+axum = { version = "0.7", features = ["ws"] }
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros", "net", "signal"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tower = { version = "0.5", features = ["util"] }
+tracing = "0.1"
