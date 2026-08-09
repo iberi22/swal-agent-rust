@@ -1,8 +1,8 @@
-use std::fmt;
-use std::sync::Arc;
 use async_trait::async_trait;
 use dashmap::DashMap;
 use serde_json::Value;
+use std::fmt;
+use std::sync::Arc;
 
 /// Error enum for Tool operations
 #[derive(Debug, Clone)]
@@ -68,7 +68,10 @@ impl ToolRegistry {
     /// Executes a registered tool by name with the given arguments.
     pub async fn execute(&self, name: &str, args: Value) -> Result<Value, ToolError> {
         let tool = {
-            let entry = self.tools.get(name).ok_or_else(|| ToolError::NotFound(name.to_string()))?;
+            let entry = self
+                .tools
+                .get(name)
+                .ok_or_else(|| ToolError::NotFound(name.to_string()))?;
             entry.value().clone()
         };
         tool.execute(args).await
