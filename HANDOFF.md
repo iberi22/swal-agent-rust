@@ -24,32 +24,34 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | Grupo | Issues | Estado |
 |-------|--------|--------|
 | A | #1, #2, #3 | ✅ COMPLETO (PRs #13-15 merged) |
-| B | #4 scaffold loop | 🟢 EN CURSO (label jules) |
+| B | #4 scaffold loop | 🟢 EN CURSO (label jules, sesión 916725318302634590) |
 | C | #5 provider, #6 skills | ⏳ espera B |
 | D | #7 AgentLoop, #9 scaffold agent | ⏳ espera C |
 | E | #8 e2e, #10 cli+config, #11 session | ⏳ espera D |
 | F | #12 tools wiring final | ⏳ espera E |
 
+## Ola 2 (30%) — issues #17-#28 CREADOS (labels ola2,wave-2, bodies en .hermes/ola2/)
+| Grupo | Issues | Contenido |
+|-------|--------|-----------|
+| G | #17, #22, #24 | scaffolds: gateway, sched, loop-services |
+| H | #18, #19, #23 | gateway http+ws (disjuntos) + subagents |
+| I | #20, #25, #26, #27 | gateway mcp + mcp-client + xavier + compaction |
+| J | #21 | gateway e2e (integra mcp routes) |
+| K | #28 | reconciliation (features.json wave2) |
+
+Ola 2 se despacha SOLO cuando Ola 1 F (#12) esté closed — el cron lo hace automáticamente.
+
 ## AUTO-AVANCE (el cron lo hace solo)
 El script `swal-agent-rust-features.py` ahora:
 1. **Auto-reconcilia**: issue CLOSED (PR merged) → sube claimed del feature a su target
-   (mapa ISSUE_FEATURES: #7→agent-loop 60%, #8→+40%, #10→cli-run 60%, #11→+40%, #12→native-tools 100%)
+   (mapa ISSUE_FEATURES cubre Ola 1 #1-12 Y Ola 2 #17-28; targets acumulativos MAX por feature)
 2. **Auto-despacha**: grupo anterior todo closed → aplica label jules a los issues OPEN
-   del siguiente grupo (grupo C: #5+#6 simultáneo; D: #7+#9; E: #8+#10+#11; F: #12)
+   del siguiente grupo (Ola 1: C→D→E→F; luego Ola 2: G→H→I→J→K)
 3. **Escanea % real** con 7 checks (paths, tests, recencia, caveats) → clamped a claimed
 4. Persiste local + Xavier; SILENT si nada cambió
 
-## Próximo paso (manual opcional)
-El cron avanza solo. Si quieres acelerar: verificar PRs abiertos y merges manualmente:
-```bash
-cd ~/proyectosSWAL/swal-agent-rust
-gh pr list --state open --repo iberi22/swal-agent-rust
-gh issue list --label jules --repo iberi22/swal-agent-rust
-# El script despacha el grupo siguiente automáticamente al mergear el actual
-```
-
 ## Cron de persistencia
-- Job: `swal-agent-rust-features-persist` (0d384e5087f3, cada 30 min, no_agent, deliver=local)
+- Job: `swal-agent-rust-features-persist` (0d384e5087f3, **cada 20 min**, no_agent, deliver=local)
 - Script: `~/.hermes/scripts/swal-agent-rust-features.py`
 - Depende de `gh` CLI (auto-reconcilia/despacha); sin gh → solo escanea % y persiste.
 - Nota: los issues de código NO tocan features.json — el % se actualiza por el scan
