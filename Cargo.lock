@@ -4915,6 +4915,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "gestalt_core",
+ "schemars 0.8.22",
  "serde",
  "serde_json",
  "swal-core",
