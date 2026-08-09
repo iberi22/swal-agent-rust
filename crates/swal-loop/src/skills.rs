@@ -1,6 +1,6 @@
 use std::collections::{HashMap, VecDeque};
 use std::path::Path;
-use std::sync::{Mutex, RwLock, OnceLock};
+use std::sync::{Mutex, OnceLock, RwLock};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Skill {
@@ -128,8 +128,13 @@ fn load_skills_from_disk(dir: &str) -> Result<Vec<Skill>, SkillError> {
 
 fn walk_dir_recursive(path: &Path, skills: &mut Vec<Skill>) -> Result<(), SkillError> {
     if path.is_dir() {
-        let entries = std::fs::read_dir(path)
-            .map_err(|e| SkillError::Io(format!("Failed to read directory {}: {}", path.display(), e)))?;
+        let entries = std::fs::read_dir(path).map_err(|e| {
+            SkillError::Io(format!(
+                "Failed to read directory {}: {}",
+                path.display(),
+                e
+            ))
+        })?;
         for entry in entries {
             let entry = entry
                 .map_err(|e| SkillError::Io(format!("Failed to read directory entry: {}", e)))?;
@@ -139,8 +144,13 @@ fn walk_dir_recursive(path: &Path, skills: &mut Vec<Skill>) -> Result<(), SkillE
             } else if entry_path.is_file() {
                 if let Some(file_name) = entry_path.file_name() {
                     if file_name == "SKILL.md" {
-                        let content = std::fs::read_to_string(&entry_path)
-                            .map_err(|e| SkillError::Io(format!("Failed to read file {}: {}", entry_path.display(), e)))?;
+                        let content = std::fs::read_to_string(&entry_path).map_err(|e| {
+                            SkillError::Io(format!(
+                                "Failed to read file {}: {}",
+                                entry_path.display(),
+                                e
+                            ))
+                        })?;
                         let path_str = entry_path.to_string_lossy().to_string();
                         let skill = parse_skill_file(&content, &path_str)?;
                         skills.push(skill);
@@ -156,7 +166,10 @@ fn parse_skill_file(content_str: &str, path: &str) -> Result<Skill, SkillError> 
     let content_normalized = content_str.replace("\r\n", "\n");
 
     if !content_normalized.starts_with("---\n") {
-        return Err(SkillError::Io(format!("File at {} does not start with frontmatter separator '---\\n'", path)));
+        return Err(SkillError::Io(format!(
+            "File at {} does not start with frontmatter separator '---\\n'",
+            path
+        )));
     }
 
     let after_first_line = &content_normalized[4..];
@@ -172,18 +185,21 @@ fn parse_skill_file(content_str: &str, path: &str) -> Result<Skill, SkillError> 
             if line.is_empty() {
                 continue;
             }
-            if line.starts_with("name:") {
-                let stripped = &line[5..];
+            if let Some(stripped) = line.strip_prefix("name:") {
                 name = Some(clean_yaml_value(stripped));
-            } else if line.starts_with("description:") {
-                let stripped = &line[12..];
+            } else if let Some(stripped) = line.strip_prefix("description:") {
                 description = Some(clean_yaml_value(stripped));
             }
         }
 
         let name = match name {
             Some(n) if !n.is_empty() => n,
-            _ => return Err(SkillError::Io(format!("Missing or empty 'name' in frontmatter at {}", path))),
+            _ => {
+                return Err(SkillError::Io(format!(
+                    "Missing or empty 'name' in frontmatter at {}",
+                    path
+                )))
+            }
         };
 
         let description = description.unwrap_or_default();
@@ -195,15 +211,18 @@ fn parse_skill_file(content_str: &str, path: &str) -> Result<Skill, SkillError> 
             content: body_section.to_string(),
         })
     } else {
-        Err(SkillError::Io(format!("Could not find closing '---\\n' separator in frontmatter at {}", path)))
+        Err(SkillError::Io(format!(
+            "Could not find closing '---\\n' separator in frontmatter at {}",
+            path
+        )))
     }
 }
 
 fn clean_yaml_value(val: &str) -> String {
     let mut s = val.trim();
-    if s.starts_with('"') && s.ends_with('"') && s.len() >= 2 {
-        s = &s[1..s.len() - 1];
-    } else if s.starts_with('\'') && s.ends_with('\'') && s.len() >= 2 {
+    if (s.starts_with('"') && s.ends_with('"') && s.len() >= 2)
+        || (s.starts_with('\'') && s.ends_with('\'') && s.len() >= 2)
+    {
         s = &s[1..s.len() - 1];
     }
     s.to_string()
@@ -212,7 +231,7 @@ fn clean_yaml_value(val: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs::{create_dir_all, write, remove_dir_all};
+    use std::fs::{create_dir_all, remove_dir_all, write};
     use std::path::PathBuf;
     use std::sync::atomic::{AtomicUsize, Ordering};
 
@@ -314,7 +333,10 @@ mod tests {
             let skill_path = skill_dir.join("SKILL.md");
             write(
                 &skill_path,
-                format!("---\nname: skill_{}\ndescription: desc_{}\n---\ncontent_{}", i, i, i),
+                format!(
+                    "---\nname: skill_{}\ndescription: desc_{}\n---\ncontent_{}",
+                    i, i, i
+                ),
             )
             .unwrap();
         }
