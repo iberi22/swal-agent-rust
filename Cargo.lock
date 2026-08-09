@@ -4951,6 +4951,14 @@ version = "0.1.0"
 [[package]]
 name = "swal-tools-web"
 version = "0.1.0"
+dependencies = [
+ "js-sys",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
 
 [[package]]
 name = "syn"
