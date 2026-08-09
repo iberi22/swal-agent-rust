@@ -7,3 +7,11 @@ authors.workspace = true
 description = "Platform-agnostic agent loop + tools trait (wasm32-clean)"
 
 [dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+schemars = "0.8"
+dashmap = "6.0"
+async-trait = "0.1"
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["rt", "macros"] }
