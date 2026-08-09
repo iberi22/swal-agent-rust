@@ -1,6 +1,6 @@
 {
   "project": "swal-agent-rust",
-  "description": "Hermes harness clone in Rust \u2014 native CLI/TUI + WASM PWA. Reuses gestalt, synapse-agentic, xavier. Scope: 100% of features across 3 waves.",
+  "description": "Hermes harness clone in Rust — native CLI/TUI + WASM PWA. Reuses gestalt, synapse-agentic, xavier. Scope: 100% of features across 3 waves.",
   "gitcore_version": "3.8.0",
   "last_updated": "2026-08-09",
   "wave_weights": {
@@ -16,9 +16,11 @@
       "wave": "wave1",
       "weight": 5,
       "progress_pct": 100,
-      "status": "completed",
+      "status": "stable",
       "implemented_in": "Cargo.toml, .github/workflows/ci.yml",
-      "tests": [],
+      "tests": [
+        "ci.yml"
+      ],
       "last_tested": "2026-08-09",
       "passes": true,
       "req_ids": [
@@ -27,7 +29,7 @@
       "user_stories": [
         "US-001"
       ],
-      "notes": "Workspace foundation with git deps and CI workflow. PR #13.",
+      "notes": "Merged via PR #13. git deps + CI workflow verified.",
       "last_updated": "2026-08-09"
     },
     {
@@ -37,9 +39,11 @@
       "wave": "wave1",
       "weight": 8,
       "progress_pct": 100,
-      "status": "completed",
+      "status": "stable",
       "implemented_in": "crates/swal-core/src/tool.rs, crates/swal-core/tests/tool_test.rs",
-      "tests": [],
+      "tests": [
+        "test_tool_registry_workflow"
+      ],
       "last_tested": "2026-08-09",
       "passes": true,
       "req_ids": [
@@ -48,7 +52,8 @@
       "user_stories": [
         "US-002"
       ],
-      "notes": "Platform-agnostic Tool trait and concurrent ToolRegistry. PR #15."
+      "notes": "Merged via PR #15. Tool trait + ToolRegistry wasm32-clean.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-session-store",
@@ -57,9 +62,11 @@
       "wave": "wave1",
       "weight": 8,
       "progress_pct": 100,
-      "status": "completed",
+      "status": "stable",
       "implemented_in": "crates/swal-store/src/session.rs, crates/swal-store/tests/session_test.rs",
-      "tests": [],
+      "tests": [
+        "test_session_store_crud_roundtrip"
+      ],
       "last_tested": "2026-08-09",
       "passes": true,
       "req_ids": [
@@ -68,12 +75,13 @@
       "user_stories": [
         "US-003"
       ],
-      "notes": "Store trait and SQLite SessionStore with WAL. PR #14."
+      "notes": "Merged via PR #14. Store trait + SessionStore rusqlite WAL.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-agent-loop",
-      "title": "swal-loop AgentLoop (LLM\u2192tools\u2192feedback)",
-      "description": "Conversational agent loop: prompt \u2192 LLM \u2192 tool_calls \u2192 execute \u2192 feed back. Platform-agnostic core, drives gestalt ToolRegistry.",
+      "title": "swal-loop AgentLoop (LLM→tools→feedback)",
+      "description": "Conversational agent loop: prompt → LLM → tool_calls → execute → feed back. Platform-agnostic core, drives gestalt ToolRegistry.",
       "wave": "wave1",
       "weight": 12,
       "progress_pct": 0,
@@ -173,7 +181,7 @@
     {
       "id": "feat-gateway",
       "title": "swal-gateway: HTTP/WS + MCP server",
-      "description": "Gateway exposes the loop remotely over HTTP/WS + MCP server. Telegram/Discord webhook\u2192EventBus shims. External MCP client completes a task via gateway.",
+      "description": "Gateway exposes the loop remotely over HTTP/WS + MCP server. Telegram/Discord webhook→EventBus shims. External MCP client completes a task via gateway.",
       "wave": "wave2",
       "weight": 8,
       "progress_pct": 0,
@@ -192,7 +200,7 @@
     },
     {
       "id": "feat-mcp-client",
-      "title": "MCP client (rmcp) \u2192 xavier",
+      "title": "MCP client (rmcp) → xavier",
       "description": "Hermes role is MCP client: swal-loop consumes MCP tools via rmcp. Gateway exposes it, loop consumes. External MCP tools callable from loop.",
       "wave": "wave2",
       "weight": 5,
@@ -273,7 +281,7 @@
     {
       "id": "feat-xavier-memory",
       "title": "Memory: xavier HTTP/MCP client round-trip",
-      "description": "Session search + store round-trip via xavier HTTP/MCP. Never embed xavier \u2014 client call only.",
+      "description": "Session search + store round-trip via xavier HTTP/MCP. Never embed xavier — client call only.",
       "wave": "wave2",
       "weight": 4,
       "progress_pct": 0,
@@ -313,7 +321,7 @@
     {
       "id": "feat-tools-web",
       "title": "swal-tools-web: OPFS/WebContainers/isomorphic-git",
-      "description": "Web tool impls: git\u2192isomorphic-git (JS interop), fs\u2192OPFS, shell\u2192WebContainers bridge. NO subprocess tool in web.",
+      "description": "Web tool impls: git→isomorphic-git (JS interop), fs→OPFS, shell→WebContainers bridge. NO subprocess tool in web.",
       "wave": "wave3",
       "weight": 3,
       "progress_pct": 0,
@@ -353,7 +361,7 @@
     {
       "id": "feat-pwa-leptos",
       "title": "Leptos PWA + Comlink worker + WebLLM",
-      "description": "PWA dashboard (Leptos, single Rust codebase \u2192 WASM) reusing swal-core types. Comlink worker runs loop + WebLLM off main thread. WebLLM in-browser inference, same OpenAI-style API.",
+      "description": "PWA dashboard (Leptos, single Rust codebase → WASM) reusing swal-core types. Comlink worker runs loop + WebLLM off main thread. WebLLM in-browser inference, same OpenAI-style API.",
       "wave": "wave3",
       "weight": 3,
       "progress_pct": 0,
@@ -372,8 +380,8 @@
     },
     {
       "id": "feat-sync-crdt",
-      "title": "swal-sync: CRDT sync engine \u2192 EdgeMesh/xavier",
-      "description": "SyncEngine behind transport trait: native\u2192EdgeMesh TCP/QUIC, web\u2192WS/WebRTC relay. Same CRDT/merge logic. State syncs to xavier.",
+      "title": "swal-sync: CRDT sync engine → EdgeMesh/xavier",
+      "description": "SyncEngine behind transport trait: native→EdgeMesh TCP/QUIC, web→WS/WebRTC relay. Same CRDT/merge logic. State syncs to xavier.",
       "wave": "wave3",
       "weight": 3,
       "progress_pct": 0,
