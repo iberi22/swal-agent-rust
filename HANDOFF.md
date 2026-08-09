@@ -26,9 +26,16 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | A | #1, #2, #3 | ✅ COMPLETO (PRs #13-15 merged) |
 | B | #4 scaffold loop | ✅ COMPLETO (PR #29 merged) |
 | C | #5 provider, #6 skills | ✅ COMPLETO (PRs #30, #31 merged) |
-| D | #7 AgentLoop, #9 scaffold agent | 🟢 EN CURSO (sesiones 2883384449109234112, 705251803403282729) |
-| E | #8 e2e, #10 cli+config, #11 session | ⏳ espera D |
+| D | #7 AgentLoop, #9 scaffold agent | ✅ COMPLETO (PRs #33, #32 merged) |
+| E | #8 e2e, #10 cli+config, #11 session | 🟢 EN CURSO (sesiones Planning ×3) |
 | F | #12 tools wiring final | ⏳ espera E |
+
+## Monitoreo activo (2 jobs cada 20 min)
+1. `swal-agent-rust-features-persist` (0d384e5087f3, no_agent): escanea % real,
+   reconcilia issues cerrados, despacha siguiente grupo, persiste en Xavier. SILENT si nada cambia.
+2. `swal-agent-rust-monitor` (0bb280c53460, LLM + collector): verifica PRs de Jules
+   (diff + cargo check en worktree), mergea los verificados, cierra issues, reporta tabla.
+   Collector: `~/.hermes/scripts/swal-agent-rust-collector.py`
 
 ## Ola 2 (30%) — issues #17-#28 CREADOS (labels ola2,wave-2, bodies en .hermes/ola2/)
 | Grupo | Issues | Contenido |
