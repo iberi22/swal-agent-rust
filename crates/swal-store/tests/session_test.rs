@@ -3,7 +3,8 @@ use swal_store::session::{SessionStore, Store};
 #[test]
 fn test_session_store_crud_roundtrip() {
     // 1. Initialize an in-memory session store for clean, isolated, network-free testing.
-    let store = SessionStore::open_in_memory().expect("Failed to initialize in-memory SessionStore");
+    let store =
+        SessionStore::open_in_memory().expect("Failed to initialize in-memory SessionStore");
 
     // Verify initial row counts
     assert_eq!(store.count_rows("sessions").unwrap(), 0);
@@ -12,7 +13,8 @@ fn test_session_store_crud_roundtrip() {
     // 2. Create a session
     let session_id = "test-session-123";
     let summary = "A test chat session";
-    let session = store.create_session(session_id, summary)
+    let session = store
+        .create_session(session_id, summary)
         .expect("Failed to create session");
 
     assert_eq!(session.id, session_id);
@@ -25,7 +27,8 @@ fn test_session_store_crud_roundtrip() {
     assert_eq!(store.count_rows("messages").unwrap(), 0);
 
     // 3. Append first message
-    let msg1 = store.append_message(session_id, "user", "Hello agent!")
+    let msg1 = store
+        .append_message(session_id, "user", "Hello agent!")
         .expect("Failed to append first message");
 
     assert_eq!(msg1.session_id, session_id);
@@ -38,7 +41,8 @@ fn test_session_store_crud_roundtrip() {
     assert_eq!(store.count_rows("messages").unwrap(), 1);
 
     // 4. Append second message
-    let msg2 = store.append_message(session_id, "assistant", "Hello! How can I help you today?")
+    let msg2 = store
+        .append_message(session_id, "assistant", "Hello! How can I help you today?")
         .expect("Failed to append second message");
 
     assert_eq!(msg2.session_id, session_id);
@@ -51,7 +55,8 @@ fn test_session_store_crud_roundtrip() {
     assert_eq!(store.count_rows("messages").unwrap(), 2);
 
     // 5. Read back session & messages and verify
-    let fetched_session = store.get_session(session_id)
+    let fetched_session = store
+        .get_session(session_id)
         .expect("Failed to get session")
         .expect("Session not found");
 
@@ -60,7 +65,8 @@ fn test_session_store_crud_roundtrip() {
     // Updated_at should have been updated upon appending messages
     assert!(fetched_session.updated_at >= fetched_session.created_at);
 
-    let messages = store.get_messages(session_id)
+    let messages = store
+        .get_messages(session_id)
         .expect("Failed to get messages");
 
     assert_eq!(messages.len(), 2);
@@ -75,7 +81,9 @@ fn test_session_store_crud_roundtrip() {
     assert_eq!(all_sessions[0].id, session_id);
 
     // 6. Delete session
-    store.delete_session(session_id).expect("Failed to delete session");
+    store
+        .delete_session(session_id)
+        .expect("Failed to delete session");
 
     // Verify row counts after deletion (should be empty cascade)
     assert_eq!(store.count_rows("sessions").unwrap(), 0);
