@@ -1,0 +1,9 @@
+[package]
+name = "swal-gateway"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "HTTP/WS + MCP gateway exposing the agent loop; MCP client to xavier"
+
+[dependencies]

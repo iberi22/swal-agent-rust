@@ -1,0 +1,9 @@
+[package]
+name = "swal-sync"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "SyncEngine behind transport trait; CRDT/merge logic, wasm-clean"
+
+[dependencies]

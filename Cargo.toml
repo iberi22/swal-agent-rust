@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/swal-loop",
+    "crates/swal-gateway",
+    "crates/swal-sched",
+    "crates/swal-agent",
+    "crates/swal-core",
+    "crates/swal-store",
+    "crates/swal-sync",
+    "crates/swal-tools-native",
+    "crates/swal-tools-web",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0"
+authors = ["BELA <bela@swal.dev>", "Xavier <xavier@swal.dev>"]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
+
+[profile.dev-fast]
+inherits = "dev"
+debug = 0
+incremental = true
+codegen-units = 256

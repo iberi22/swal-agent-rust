@@ -1,0 +1,9 @@
+[package]
+name = "swal-tools-native"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Native-only tools: shell, fs, git via git2"
+
+[dependencies]

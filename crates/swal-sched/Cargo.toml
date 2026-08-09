@@ -1,0 +1,9 @@
+[package]
+name = "swal-sched"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Cron ticks + subagent spawn; tokio timers, rayon for CPU work"
+
+[dependencies]
