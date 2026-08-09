@@ -27,8 +27,22 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | B | #4 scaffold loop | ✅ COMPLETO (PR #29 merged) |
 | C | #5 provider, #6 skills | ✅ COMPLETO (PRs #30, #31 merged) |
 | D | #7 AgentLoop, #9 scaffold agent | ✅ COMPLETO (PRs #33, #32 merged) |
-| E | #8 e2e, #10 cli+config, #11 session | 🟢 EN CURSO (sesiones Planning ×3) |
-| F | #12 tools wiring final | ⏳ espera E |
+| E | #8 e2e, #10 cli+config, #11 session | ✅ COMPLETO (PRs #34-36 merged) |
+| F | #12 tools wiring final | 🟢 EN CURSO |
+
+## DISEÑO DE WAVES ≥5 TAREAS SIMULTÁNEAS (a partir de Ola 2)
+Patrón: scaffolds primero (pocos, crean lib.rs + stubs compilables) → MEGA-GRUPO
+de implementación (5+ issues que reemplazan stubs en archivos DISJUNTOS) →
+reconciliación final. Así Jules trabaja mínimo 5 issues a la vez sin conflictos.
+
+| Ola | Scaffolds (paralelos) | MEGA-GRUPO (simultáneos) | Final |
+|-----|----------------------|--------------------------|-------|
+| Ola 1 | A(3): #1#2#3 · B: #4 · D: #9 | C(2): #5#6 · D(2): #7 · E(3): #8#10#11 | F: #12 |
+| Ola 2 | G(3): #17#22#24 | **M(7): #18#19#20#23#25#26#27** | J:#21 · K:#28 |
+| Ola 3 | L(4): #37#39#44#46 | **N(7): #38#40#41#42#43#45#47** | O:#48 |
+
+Regla: label jules se aplica a TODO el mega-grupo simultáneamente (7 issues)
+solo cuando el grupo de scaffolds está completamente closed.
 
 ## Monitoreo activo (2 jobs cada 20 min)
 1. `swal-agent-rust-features-persist` (0d384e5087f3, no_agent): escanea % real,
