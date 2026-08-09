@@ -1,68 +1,72 @@
 # HANDOFF — Continuar en otra sesión
 
-> Estado: 2026-08-08 (noche). Proyecto: swal-agent-rust — clon de Hermes en Rust.
-> Repo: https://github.com/iberi22/swal-agent-rust (público, push hecho).
+> Estado: 2026-08-09 (madrugada). Proyecto: swal-agent-rust — clon de Hermes en Rust.
+> Repo: https://github.com/iberi22/swal-agent-rust (público).
 
 ## Qué es el proyecto
 Rust-native clone of the Hermes agent harness (ultra-efficient, 15-40 MB vs ~345 MB/instancia Python).
 One codebase → native CLI/TUI + WASM PWA (reemplaza swal-agent-runner). Reusa gestalt,
 synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimalista).
-Investigación web incorporada: AutoAgents/Rig benchmarks, rmcp, wasm-bindgen+WebLLM, tokio+rayon.
 
 ## Estado actual (DONE)
-- [x] Wave 0: docs canónicos + esqueleto 9 crates. Commits: ab7d89d, 994e96a, 225aa20
-- [x] Repo GitHub creado y pusheado: https://github.com/iberi22/swal-agent-rust
-- [x] Docs: README.md, docs/ARCHITECTURE.md, docs/REUSE-MAP.md, docs/PLAN.md
-- [x] 3 bodies de issues Wave 1 listos: `.hermes/ola1/body-01-foundation.md`, `body-02-loop.md`, `body-03-cli.md`
-- [x] File islands verificadas: 0 conflictos (paralelo seguro)
-- [x] Decisión guardada en Xavier: `swal-agent-rust/decisions/001-architecture`
-- [ ] AGENTS.md del repo: NO creado (guard bloqueó por falta de respuesta; no reintentar sin aprobación explícita)
+- [x] Wave 0: docs canónicos + esqueleto 9 crates (commits ab7d89d, 994e96a, 225aa20, 6668464)
+- [x] **Catálogo 100% features**: `.gitcore/features.json` (19 features, pesos 55/30/15 → 100%)
+- [x] **SRS con historias de usuario**: `docs/SRS/USER-STORIES.md` (US-001..019) + `docs/SRS/REQUIREMENTS.md` (REQ-001..019)
+- [x] **12 issues Ola 1 creados** (#1-#12, labels ola1,wave-1) — bodies en `.hermes/ola1/body-*.md`
+- [x] **Harness file islands verificado** — grupos de despacho definidos
+- [x] **Dispatch Grupo A a Jules**: #1 foundation, #2 core, #3 store (labels jules aplicados)
+- [x] **Cron persistencia**: `swal-agent-rust-features-persist` (0d384e5087f3, cada 30 min,
+      no_agent, script `~/.hermes/scripts/swal-agent-rust-features.py` → features.json + Xavier)
+- [x] Labels ola1/wave-1/jules creados en el repo
 
-## PRÓXIMO PASO (cuando se reanude): despachar Wave 1 a Jules
+## Issues Ola 1 (12) — grupos de despacho
+| Grupo | Issues | Contenido | Merge order |
+|-------|--------|-----------|-------------|
+| A (DISPATCHED) | #1 | foundation: git deps + CI | 1 |
+| A (DISPATCHED) | #2 | swal-core: Tool trait + ToolRegistry (wasm32-clean) | 2 |
+| A (DISPATCHED) | #3 | swal-store: Store trait + SessionStore rusqlite | 2 |
+| B (wait A) | #4 | swal-loop scaffold (lib.rs, Cargo.toml, stubs) | 3 |
+| C (wait B) | #5 | provider.rs: Provider + MockProvider real | 4 |
+| C (wait B) | #6 | skills.rs: 2-layer cache loader real | 4 |
+| D (wait C) | #7 | loop.rs: AgentLoop core (LLM→tools→feedback) | 5 |
+| D (wait C) | #9 | swal-agent scaffold (main.rs, Cargo.toml, stubs) | 7 |
+| E (wait D) | #8 | loop e2e tests (public API) | 6 |
+| E (wait D) | #10 | cli.rs + config.rs real (run + config) | 8 |
+| E (wait D) | #11 | session.rs real (persistencia) | 8 |
+| F (wait E) | #12 | tools.rs + cli wiring final (run E2E con MockProvider) | 9 |
+
+Regla: aplicar label `jules` SOLO al grupo cuyo grupo previo esté mergeado.
+Verificar antes con harness: los "conflictos" #4↔#5/#6/#7 y #9↔#10/#11/#12 son scaffold→impl (secuencial, correcto).
+
+## Próximo paso (cuando #1-#3 mergeen)
 ```bash
 cd ~/proyectosSWAL/swal-agent-rust
-# 1. Crear los 3 issues (usar nombres REALES de archivo):
-gh issue create --title "$(head -1 .hermes/ola1/body-01-foundation.md | sed 's/^# //')" \
-  --body-file .hermes/ola1/body-01-foundation.md --label ola1,wave-1
-gh issue create --title "$(head -1 .hermes/ola1/body-02-loop.md | sed 's/^# //')" \
-  --body-file .hermes/ola1/body-02-loop.md --label ola1,wave-1
-gh issue create --title "$(head -1 .hermes/ola1/body-03-cli.md | sed 's/^# //')" \
-  --body-file .hermes/ola1/body-03-cli.md --label ola1,wave-1
-
-# 2. VERIFICAR (regla de platino: releer bodies antes de dispatch)
-gh issue list --label ola1
-# Releer cada body: gh issue view <NUM> --json body | head -30
-
-# 3. SOLO ENTONCES dispatch:
-gh issue edit <NUM1> --add-label jules
-gh issue edit <NUM2> --add-label jules
-gh issue edit <NUM3> --add-label jules
-
-# 4. Monitoreo (24h): PRs con archivos
+# 1. Verificar merges
 gh pr list --state open --repo iberi22/swal-agent-rust
-# Anti-empty-PR: gh pr view <PR> --json files --jq '.files | length'
+# 2. Dispatch Grupo B (issue 4):
+gh issue edit 4 --add-label jules
+# 3. Luego C (5,6), D (7,9), E (8,10,11), F (12) — siempre tras merge del grupo previo
 ```
 
-## Issues Wave 1 (diseño ya hecho)
-| Issue | Archivo body | Contenido | Merge order |
-|-------|-------------|-----------|-------------|
-| #1 foundation | body-01-foundation.md | git deps (gestalt_core, synapse-agentic) + swal-core Tool trait + swal-store SessionStore rusqlite + CI | 1 |
-| #2 loop | body-02-loop.md | AgentLoop (LLM→tools→feedback, MockProvider, skills loader) | 2 |
-| #3 cli | body-03-cli.md | swal-agent run + config + persistencia sesión | 3 |
+## Cron de persistencia
+- Job: `swal-agent-rust-features-persist` (0d384e5087f3, cada 30 min, no_agent, deliver=local)
+- Script: `~/.hermes/scripts/swal-agent-rust-features.py`
+  - Escanea `.gitcore/features.json` (19 features) → recalcula % real (7 checks ponderados)
+  - Persiste local (features.json) + Xavier (POST /v1/memories, token de xavier/.env)
+  - SILENT si no hay cambio (watchdog pattern); reporta solo cuando el % global cambia
+- Nota: los issues de código NO tocan features.json — el % se actualiza por el scan
+  (el scanner mide evidencia real en disco: paths implemented_in, tests, recencia, caveats)
 
-Dependencias: 2→1, 3→1,2. Islands: Cargo.toml+swal-core+swal-store+.github / swal-loop / swal-agent.
-
-## Después de Wave 1 → Wave 2 (30%)
+## Después de Ola 1 → Ola 2 (30%)
 Gateway HTTP/WS+MCP (swal-gateway, rmcp), cron+subagentes (swal-sched), xavier HTTP/MCP client,
-synapse-agentic Hive/providers/compaction. Done: MCP cliente remoto, cron dispara, subagente aislado, compaction.
+synapse-agentic Hive/providers/compaction. 12 issues nuevos (body-XX en `.hermes/ola2/`).
 
-## Después → Wave 3 (15%) — reemplaza swal-agent-runner
+## Después → Ola 3 (15%) — reemplaza swal-agent-runner
 swal-core wasm32-clean, swal-tools-web (OPFS/WebContainers/isomorphic-git), swal-store IndexedDB,
-Leptos PWA + Comlink worker + WebLLM, swal-sync CRDT → EdgeMesh/xavier.
+Leptos PWA + Comlink worker + WebLLM, swal-sync CRDT → EdgeMesh/xavier. 12 issues nuevos.
 
 ## Referencias útiles
-- Arquitectura: docs/ARCHITECTURE.md (Tokio I/O + Rayon CPU, pools separados, rayon::spawn+oneshot)
-- Reuso: docs/REUSE-MAP.md (qué tomar de gestalt/synapse-agentic/xavier, qué NO)
-- Plan: docs/PLAN.md (done-criteria de cada wave)
-- Skills de orquestación: ~/.hermes/skills/gitcore-jules-issues (template canónico), swal-wave-execution
+- Arquitectura: docs/ARCHITECTURE.md · Reuso: docs/REUSE-MAP.md · Plan: docs/PLAN.md
+- Features 100%: .gitcore/features.json · Stories: docs/SRS/USER-STORIES.md · Reqs: docs/SRS/REQUIREMENTS.md
+- Skills: jules-async-orchestration, swal-wave-execution, gitcore-auto-verify, swal-project-monitoring
 - Provider memoria Xavier de Hermes ROTO (tool_call_id) → usar curl HTTP con token de ~/proyectosSWAL/xavier/.env
