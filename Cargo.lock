@@ -4881,9 +4881,11 @@ name = "swal-agent"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "clap",
  "dirs",
  "gestalt_core",
+ "schemars 0.8.22",
  "serde",
  "serde_json",
  "swal-core",
