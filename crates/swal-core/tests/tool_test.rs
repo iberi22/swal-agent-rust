@@ -1,7 +1,7 @@
-use std::sync::Arc;
 use schemars::JsonSchema;
 use serde::Deserialize;
 use serde_json::{json, Value};
+use std::sync::Arc;
 use swal_core::tool::{Tool, ToolError, ToolRegistry};
 
 // Define an argument struct for the Adder tool.
@@ -28,8 +28,8 @@ impl Tool for AdderTool {
     }
 
     async fn execute(&self, args: Value) -> Result<Value, ToolError> {
-        let parsed: AdderArgs = serde_json::from_value(args)
-            .map_err(|e| ToolError::Serialization(e.to_string()))?;
+        let parsed: AdderArgs =
+            serde_json::from_value(args).map_err(|e| ToolError::Serialization(e.to_string()))?;
         let sum = parsed.a + parsed.b;
         Ok(json!({ "sum": sum }))
     }
@@ -58,8 +58,8 @@ impl Tool for EchoTool {
     }
 
     async fn execute(&self, args: Value) -> Result<Value, ToolError> {
-        let parsed: EchoArgs = serde_json::from_value(args)
-            .map_err(|e| ToolError::Serialization(e.to_string()))?;
+        let parsed: EchoArgs =
+            serde_json::from_value(args).map_err(|e| ToolError::Serialization(e.to_string()))?;
         Ok(json!({ "echoed": parsed.message }))
     }
 }

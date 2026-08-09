@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use serde::{Serialize, Deserialize};
 
 /// Shared serde representation of a Chat Session.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -75,7 +75,12 @@ pub trait Store {
 
     /// Appends a new message to the specified session.
     /// Updates the session's `updated_at` timestamp.
-    fn append_message(&self, session_id: &str, role: &str, content: &str) -> Result<Message, Self::Error>;
+    fn append_message(
+        &self,
+        session_id: &str,
+        role: &str,
+        content: &str,
+    ) -> Result<Message, Self::Error>;
 
     /// Retrieves a session by its ID.
     fn get_session(&self, id: &str) -> Result<Option<Session>, Self::Error>;
@@ -181,16 +186,23 @@ impl Store for SessionStore {
         })
     }
 
-    fn append_message(&self, session_id: &str, role: &str, content: &str) -> Result<Message, Self::Error> {
+    fn append_message(
+        &self,
+        session_id: &str,
+        role: &str,
+        content: &str,
+    ) -> Result<Message, Self::Error> {
         let conn = self.conn.lock().unwrap();
         let now = chrono::Utc::now().timestamp();
 
         // Check if the session exists.
-        let session_exists: bool = conn.query_row(
-            "SELECT 1 FROM sessions WHERE id = ?1;",
-            rusqlite::params![session_id],
-            |_| Ok(true)
-        ).unwrap_or(false);
+        let session_exists: bool = conn
+            .query_row(
+                "SELECT 1 FROM sessions WHERE id = ?1;",
+                rusqlite::params![session_id],
+                |_| Ok(true),
+            )
+            .unwrap_or(false);
 
         if !session_exists {
             return Err(StoreError::SessionNotFound(session_id.to_string()));
@@ -218,7 +230,8 @@ impl Store for SessionStore {
 
     fn get_session(&self, id: &str) -> Result<Option<Session>, Self::Error> {
         let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare("SELECT id, created_at, updated_at, summary FROM sessions WHERE id = ?1;")?;
+        let mut stmt = conn
+            .prepare("SELECT id, created_at, updated_at, summary FROM sessions WHERE id = ?1;")?;
         let mut rows = stmt.query(rusqlite::params![id])?;
         if let Some(row) = rows.next()? {
             Ok(Some(Session {
@@ -254,7 +267,9 @@ impl Store for SessionStore {
 
     fn list_sessions(&self) -> Result<Vec<Session>, Self::Error> {
         let conn = self.conn.lock().unwrap();
-        let mut stmt = conn.prepare("SELECT id, created_at, updated_at, summary FROM sessions ORDER BY updated_at DESC;")?;
+        let mut stmt = conn.prepare(
+            "SELECT id, created_at, updated_at, summary FROM sessions ORDER BY updated_at DESC;",
+        )?;
         let mapped = stmt.query_map([], |row| {
             Ok(Session {
                 id: row.get(0)?,
@@ -273,7 +288,10 @@ impl Store for SessionStore {
 
     fn delete_session(&self, id: &str) -> Result<(), Self::Error> {
         let conn = self.conn.lock().unwrap();
-        conn.execute("DELETE FROM messages WHERE session_id = ?1;", rusqlite::params![id])?;
+        conn.execute(
+            "DELETE FROM messages WHERE session_id = ?1;",
+            rusqlite::params![id],
+        )?;
         conn.execute("DELETE FROM sessions WHERE id = ?1;", rusqlite::params![id])?;
         Ok(())
     }
