@@ -4901,10 +4901,13 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "dashmap 6.2.1",
+ "getrandom 0.2.17",
  "schemars 0.8.22",
  "serde",
  "serde_json",
  "tokio",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
