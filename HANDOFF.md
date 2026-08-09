@@ -24,9 +24,9 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | Grupo | Issues | Estado |
 |-------|--------|--------|
 | A | #1, #2, #3 | ✅ COMPLETO (PRs #13-15 merged) |
-| B | #4 scaffold loop | ✅ COMPLETO (PR #29 merged, issue closed) |
-| C | #5 provider, #6 skills | 🟢 EN CURSO (dispatch simultáneo) |
-| D | #7 AgentLoop, #9 scaffold agent | ⏳ espera C |
+| B | #4 scaffold loop | ✅ COMPLETO (PR #29 merged) |
+| C | #5 provider, #6 skills | ✅ COMPLETO (PRs #30, #31 merged) |
+| D | #7 AgentLoop, #9 scaffold agent | 🟢 EN CURSO (sesiones 2883384449109234112, 705251803403282729) |
 | E | #8 e2e, #10 cli+config, #11 session | ⏳ espera D |
 | F | #12 tools wiring final | ⏳ espera E |
 
@@ -40,6 +40,19 @@ synapse-agentic, xavier (NO replicar). Kimi k3 diseñó la arquitectura (minimal
 | K | #28 | reconciliation (features.json wave2) |
 
 Ola 2 se despacha SOLO cuando Ola 1 F (#12) esté closed — el cron lo hace automáticamente.
+
+## CATÁLOGO 37 FEATURES (12-13 por wave)
+- Wave 1: 13 features (git-deps, ci-pipeline, tool-trait, tool-registry, store-trait,
+  session-sqlite, provider-trait, mock-provider, skills-loader, skills-cache,
+  agent-loop, cli-run, native-tools) — 55%
+- Wave 2: 12 features (gateway-http, gateway-ws, gateway-mcp-server, mcp-client,
+  mcp-tools, cron-ticker, cron-tasks, subagent-spawn, subagent-isolation,
+  compaction, xavier-store, xavier-search) — 30%
+- Wave 3: 12 features (wasm-core-loop, wasm-core-tools, tools-opfs, tools-git-web,
+  tools-shell-web, store-indexeddb, store-schema-shared, pwa-leptos, pwa-comlink,
+  pwa-webllm, sync-crdt, sync-transport) — 15%
+- Total 37 = 100%. SRS: US-001..US-037, REQ-001..REQ-037.
+- % actual: 21% (6 features W1 al 100% por PRs #13-15)
 
 ## AUTO-AVANCE (el cron lo hace solo)
 El script `swal-agent-rust-features.py` ahora:
