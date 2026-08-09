@@ -6,3 +6,7 @@ dist
 .DS_Store
 .idea
 .vscode
+
+# Runtime artifacts (never commit)
+data/
+*.db
