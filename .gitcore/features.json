@@ -241,19 +241,24 @@
       "description": "Conversational loop: prompt→LLM→tool_calls→execute→feedback until final or max_steps.",
       "wave": "wave1",
       "weight": 10,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-loop/src/loop.rs, crates/swal-loop/tests/loop_e2e.rs",
+      "tests": [
+        "test_agent_loop_roundtrip",
+        "test_agent_loop_max_steps",
+        "test_agent_loop_e2e_roundtrip"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-011"
       ],
       "user_stories": [
         "US-011"
       ],
-      "notes": ""
+      "notes": "PRs #33 (core) + #34 (e2e) merged. AgentLoop LLM→tools→feedback con max_steps.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-cli-run",
@@ -261,19 +266,24 @@
       "description": "swal-agent run \"task\" with config (model/provider/session dir) from CLI>env>defaults.",
       "wave": "wave1",
       "weight": 6,
-      "progress_pct": 0,
-      "status": "planned",
-      "implemented_in": "",
-      "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "progress_pct": 100,
+      "status": "stable",
+      "implemented_in": "crates/swal-agent/src/cli.rs, crates/swal-agent/src/config.rs",
+      "tests": [
+        "test_config_defaults",
+        "test_config_from_file_complete",
+        "test_config_load_precedence"
+      ],
+      "last_tested": "2026-08-09",
+      "passes": true,
       "req_ids": [
         "REQ-012"
       ],
       "user_stories": [
         "US-012"
       ],
-      "notes": ""
+      "notes": "PRs #35 (cli+config) merged. swal-agent run con config CLI>env>defaults.",
+      "last_updated": "2026-08-09"
     },
     {
       "id": "feat-native-tools",
