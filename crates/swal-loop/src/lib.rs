@@ -4,3 +4,7 @@
 pub mod r#loop;
 pub mod provider;
 pub mod skills;
+
+pub mod mcp_client;
+pub mod xavier;
+pub mod compaction;
