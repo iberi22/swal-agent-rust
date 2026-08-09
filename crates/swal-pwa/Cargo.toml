@@ -1,0 +1,18 @@
+[package]
+name = "swal-pwa"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "swal-pwa — Leptos PWA scaffold"
+
+[dependencies]
+leptos = { version = "0.7", features = ["csr"] }
+leptos_router = "0.7"
+wasm-bindgen = "0.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+swal-core = { path = "../swal-core" }
+swal-tools-web = { path = "../swal-tools-web" }
+swal-store = { path = "../swal-store" }
+swal-sync = { path = "../swal-sync" }

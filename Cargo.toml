@@ -10,6 +10,7 @@ members = [
     "crates/swal-sync",
     "crates/swal-tools-native",
     "crates/swal-tools-web",
+    "crates/swal-pwa",
 ]
 
 [workspace.dependencies]
