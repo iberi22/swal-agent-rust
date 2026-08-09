@@ -8,10 +8,13 @@
 - Workspace skeleton (crates below, empty libs, workspace compiles)
 - Reuse map agreed (gestalt / synapse-agentic / xavier roles fixed)
 
-## Wave 1 — Native core (~55%)
+## Wave 1 — Native core (~55%) — 🟢 21% done (foundation/core/store merged)
 **Goal:** working CLI agent end-to-end.
 **Crates:** swal-loop, swal-agent (CLI only), gestalt reuse (ToolRegistry, skills, SQLite, worktrees), skills file loader, session schema.
 **Done-criteria:**
+- [x] Workspace git deps + CI (PR #13) — feat-workspace-foundation 100%
+- [x] swal-core Tool trait + ToolRegistry wasm32-clean (PR #15) — feat-tool-registry 100%
+- [x] swal-store Store trait + SessionStore SQLite WAL (PR #14) — feat-session-store 100%
 - [ ] `swal-agent run "task"` executes LLM → tool → feedback loop
 - [ ] Tools callable via gestalt ToolRegistry (shell, read, write, git)
 - [ ] Sessions persisted in SQLite (gestalt-state)
@@ -41,7 +44,7 @@
 | Wave | % | Status |
 |------|---|--------|
 | 0 | — | ✅ |
-| 1 | 55 | ⏳ pending |
-| 2 | 30 | ⏳ pending |
-| 3 | 15 | ⏳ pending |
-| **Total** | **100** | |
+| 1 | 21 | 🟢 in progress (groups B-F pending) |
+| 2 | 0 | ⏳ pending |
+| 3 | 0 | ⏳ pending |
+| **Total** | **21** | 🟢 |
