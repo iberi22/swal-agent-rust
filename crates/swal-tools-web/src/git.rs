@@ -31,7 +31,10 @@ fn get_isomorphic_git() -> Result<wasm_bindgen::JsValue, String> {
     }
 
     if git_obj.is_undefined() || git_obj.is_null() {
-        return Err("isomorphic-git unavailable (neither window.__isomorphicGit nor window.git was found)".to_string());
+        return Err(
+            "isomorphic-git unavailable (neither window.__isomorphicGit nor window.git was found)"
+                .to_string(),
+        );
     }
 
     Ok(git_obj)
@@ -91,27 +94,39 @@ pub async fn clone_repo(url: &str, dir: &str) -> Result<(), String> {
     if !clone_fn.is_function() {
         return Err("clone is not a function in isomorphic-git".to_string());
     }
-    let clone_fn = clone_fn.dyn_into::<js_sys::Function>()
+    let clone_fn = clone_fn
+        .dyn_into::<js_sys::Function>()
         .map_err(|e| format!("Failed to convert clone to Function: {:?}", e))?;
 
     let options = create_options_with_fs()?;
-    js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("url"), &wasm_bindgen::JsValue::from_str(url))
-        .map_err(|e| format!("Failed to set url: {:?}", e))?;
-    js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("dir"), &wasm_bindgen::JsValue::from_str(dir))
-        .map_err(|e| format!("Failed to set dir: {:?}", e))?;
+    js_sys::Reflect::set(
+        &options,
+        &wasm_bindgen::JsValue::from_str("url"),
+        &wasm_bindgen::JsValue::from_str(url),
+    )
+    .map_err(|e| format!("Failed to set url: {:?}", e))?;
+    js_sys::Reflect::set(
+        &options,
+        &wasm_bindgen::JsValue::from_str("dir"),
+        &wasm_bindgen::JsValue::from_str(dir),
+    )
+    .map_err(|e| format!("Failed to set dir: {:?}", e))?;
 
     if let Some(http) = get_http_plugin() {
         js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("http"), &http)
             .map_err(|e| format!("Failed to set http: {:?}", e))?;
     }
 
-    let promise = clone_fn.call1(&wasm_bindgen::JsValue::UNDEFINED, &options)
+    let promise = clone_fn
+        .call1(&wasm_bindgen::JsValue::UNDEFINED, &options)
         .map_err(|e| format!("Error calling clone: {:?}", e))?;
 
-    let promise = promise.dyn_into::<js_sys::Promise>()
+    let promise = promise
+        .dyn_into::<js_sys::Promise>()
         .map_err(|e| format!("clone did not return a Promise: {:?}", e))?;
 
-    wasm_bindgen_futures::JsFuture::from(promise).await
+    wasm_bindgen_futures::JsFuture::from(promise)
+        .await
         .map_err(|e| format!("Clone failed: {}", map_js_err(e)))?;
 
     Ok(())
@@ -130,22 +145,34 @@ pub async fn commit_all(msg: &str) -> Result<(), String> {
     if !add_fn.is_function() {
         return Err("add is not a function in isomorphic-git".to_string());
     }
-    let add_fn = add_fn.dyn_into::<js_sys::Function>()
+    let add_fn = add_fn
+        .dyn_into::<js_sys::Function>()
         .map_err(|e| format!("Failed to convert add to Function: {:?}", e))?;
 
     let add_options = create_options_with_fs()?;
-    js_sys::Reflect::set(&add_options, &wasm_bindgen::JsValue::from_str("dir"), &wasm_bindgen::JsValue::from_str("."))
-        .map_err(|e| format!("Failed to set dir: {:?}", e))?;
-    js_sys::Reflect::set(&add_options, &wasm_bindgen::JsValue::from_str("filepath"), &wasm_bindgen::JsValue::from_str("."))
-        .map_err(|e| format!("Failed to set filepath: {:?}", e))?;
+    js_sys::Reflect::set(
+        &add_options,
+        &wasm_bindgen::JsValue::from_str("dir"),
+        &wasm_bindgen::JsValue::from_str("."),
+    )
+    .map_err(|e| format!("Failed to set dir: {:?}", e))?;
+    js_sys::Reflect::set(
+        &add_options,
+        &wasm_bindgen::JsValue::from_str("filepath"),
+        &wasm_bindgen::JsValue::from_str("."),
+    )
+    .map_err(|e| format!("Failed to set filepath: {:?}", e))?;
 
-    let add_promise = add_fn.call1(&wasm_bindgen::JsValue::UNDEFINED, &add_options)
+    let add_promise = add_fn
+        .call1(&wasm_bindgen::JsValue::UNDEFINED, &add_options)
         .map_err(|e| format!("Error calling add: {:?}", e))?;
 
-    let add_promise = add_promise.dyn_into::<js_sys::Promise>()
+    let add_promise = add_promise
+        .dyn_into::<js_sys::Promise>()
         .map_err(|e| format!("add did not return a Promise: {:?}", e))?;
 
-    wasm_bindgen_futures::JsFuture::from(add_promise).await
+    wasm_bindgen_futures::JsFuture::from(add_promise)
+        .await
         .map_err(|e| format!("Add failed: {}", map_js_err(e)))?;
 
     // 2. isomorphicGit.commit({ fs, dir: ".", message: msg })
@@ -156,30 +183,54 @@ pub async fn commit_all(msg: &str) -> Result<(), String> {
     if !commit_fn.is_function() {
         return Err("commit is not a function in isomorphic-git".to_string());
     }
-    let commit_fn = commit_fn.dyn_into::<js_sys::Function>()
+    let commit_fn = commit_fn
+        .dyn_into::<js_sys::Function>()
         .map_err(|e| format!("Failed to convert commit to Function: {:?}", e))?;
 
     let commit_options = create_options_with_fs()?;
-    js_sys::Reflect::set(&commit_options, &wasm_bindgen::JsValue::from_str("dir"), &wasm_bindgen::JsValue::from_str("."))
-        .map_err(|e| format!("Failed to set dir: {:?}", e))?;
-    js_sys::Reflect::set(&commit_options, &wasm_bindgen::JsValue::from_str("message"), &wasm_bindgen::JsValue::from_str(msg))
-        .map_err(|e| format!("Failed to set message: {:?}", e))?;
+    js_sys::Reflect::set(
+        &commit_options,
+        &wasm_bindgen::JsValue::from_str("dir"),
+        &wasm_bindgen::JsValue::from_str("."),
+    )
+    .map_err(|e| format!("Failed to set dir: {:?}", e))?;
+    js_sys::Reflect::set(
+        &commit_options,
+        &wasm_bindgen::JsValue::from_str("message"),
+        &wasm_bindgen::JsValue::from_str(msg),
+    )
+    .map_err(|e| format!("Failed to set message: {:?}", e))?;
 
     let author_obj = js_sys::Object::new();
-    js_sys::Reflect::set(&author_obj, &wasm_bindgen::JsValue::from_str("name"), &wasm_bindgen::JsValue::from_str("Agent"))
-        .map_err(|e| format!("Failed to set author name: {:?}", e))?;
-    js_sys::Reflect::set(&author_obj, &wasm_bindgen::JsValue::from_str("email"), &wasm_bindgen::JsValue::from_str("agent@swal.local"))
-        .map_err(|e| format!("Failed to set author email: {:?}", e))?;
-    js_sys::Reflect::set(&commit_options, &wasm_bindgen::JsValue::from_str("author"), &author_obj)
-        .map_err(|e| format!("Failed to set author: {:?}", e))?;
+    js_sys::Reflect::set(
+        &author_obj,
+        &wasm_bindgen::JsValue::from_str("name"),
+        &wasm_bindgen::JsValue::from_str("Agent"),
+    )
+    .map_err(|e| format!("Failed to set author name: {:?}", e))?;
+    js_sys::Reflect::set(
+        &author_obj,
+        &wasm_bindgen::JsValue::from_str("email"),
+        &wasm_bindgen::JsValue::from_str("agent@swal.local"),
+    )
+    .map_err(|e| format!("Failed to set author email: {:?}", e))?;
+    js_sys::Reflect::set(
+        &commit_options,
+        &wasm_bindgen::JsValue::from_str("author"),
+        &author_obj,
+    )
+    .map_err(|e| format!("Failed to set author: {:?}", e))?;
 
-    let commit_promise = commit_fn.call1(&wasm_bindgen::JsValue::UNDEFINED, &commit_options)
+    let commit_promise = commit_fn
+        .call1(&wasm_bindgen::JsValue::UNDEFINED, &commit_options)
         .map_err(|e| format!("Error calling commit: {:?}", e))?;
 
-    let commit_promise = commit_promise.dyn_into::<js_sys::Promise>()
+    let commit_promise = commit_promise
+        .dyn_into::<js_sys::Promise>()
         .map_err(|e| format!("commit did not return a Promise: {:?}", e))?;
 
-    wasm_bindgen_futures::JsFuture::from(commit_promise).await
+    wasm_bindgen_futures::JsFuture::from(commit_promise)
+        .await
         .map_err(|e| format!("Commit failed: {}", map_js_err(e)))?;
 
     Ok(())
@@ -196,23 +247,32 @@ pub async fn status() -> Result<Vec<String>, String> {
     if !status_fn.is_function() {
         return Err("statusMatrix is not a function in isomorphic-git".to_string());
     }
-    let status_fn = status_fn.dyn_into::<js_sys::Function>()
+    let status_fn = status_fn
+        .dyn_into::<js_sys::Function>()
         .map_err(|e| format!("Failed to convert statusMatrix to Function: {:?}", e))?;
 
     let options = create_options_with_fs()?;
-    js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("dir"), &wasm_bindgen::JsValue::from_str("."))
-        .map_err(|e| format!("Failed to set dir: {:?}", e))?;
+    js_sys::Reflect::set(
+        &options,
+        &wasm_bindgen::JsValue::from_str("dir"),
+        &wasm_bindgen::JsValue::from_str("."),
+    )
+    .map_err(|e| format!("Failed to set dir: {:?}", e))?;
 
-    let promise = status_fn.call1(&wasm_bindgen::JsValue::UNDEFINED, &options)
+    let promise = status_fn
+        .call1(&wasm_bindgen::JsValue::UNDEFINED, &options)
         .map_err(|e| format!("Error calling statusMatrix: {:?}", e))?;
 
-    let promise = promise.dyn_into::<js_sys::Promise>()
+    let promise = promise
+        .dyn_into::<js_sys::Promise>()
         .map_err(|e| format!("statusMatrix did not return a Promise: {:?}", e))?;
 
-    let result_val = wasm_bindgen_futures::JsFuture::from(promise).await
+    let result_val = wasm_bindgen_futures::JsFuture::from(promise)
+        .await
         .map_err(|e| format!("StatusMatrix failed: {}", map_js_err(e)))?;
 
-    let matrix_arr = result_val.dyn_into::<js_sys::Array>()
+    let matrix_arr = result_val
+        .dyn_into::<js_sys::Array>()
         .map_err(|_| "statusMatrix result is not an Array".to_string())?;
 
     let mut results = Vec::new();
@@ -268,27 +328,39 @@ pub async fn push(remote: &str) -> Result<(), String> {
     if !push_fn.is_function() {
         return Err("push is not a function in isomorphic-git".to_string());
     }
-    let push_fn = push_fn.dyn_into::<js_sys::Function>()
+    let push_fn = push_fn
+        .dyn_into::<js_sys::Function>()
         .map_err(|e| format!("Failed to convert push to Function: {:?}", e))?;
 
     let options = create_options_with_fs()?;
-    js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("dir"), &wasm_bindgen::JsValue::from_str("."))
-        .map_err(|e| format!("Failed to set dir: {:?}", e))?;
-    js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("remote"), &wasm_bindgen::JsValue::from_str(remote))
-        .map_err(|e| format!("Failed to set remote: {:?}", e))?;
+    js_sys::Reflect::set(
+        &options,
+        &wasm_bindgen::JsValue::from_str("dir"),
+        &wasm_bindgen::JsValue::from_str("."),
+    )
+    .map_err(|e| format!("Failed to set dir: {:?}", e))?;
+    js_sys::Reflect::set(
+        &options,
+        &wasm_bindgen::JsValue::from_str("remote"),
+        &wasm_bindgen::JsValue::from_str(remote),
+    )
+    .map_err(|e| format!("Failed to set remote: {:?}", e))?;
 
     if let Some(http) = get_http_plugin() {
         js_sys::Reflect::set(&options, &wasm_bindgen::JsValue::from_str("http"), &http)
             .map_err(|e| format!("Failed to set http: {:?}", e))?;
     }
 
-    let promise = push_fn.call1(&wasm_bindgen::JsValue::UNDEFINED, &options)
+    let promise = push_fn
+        .call1(&wasm_bindgen::JsValue::UNDEFINED, &options)
         .map_err(|e| format!("Error calling push: {:?}", e))?;
 
-    let promise = promise.dyn_into::<js_sys::Promise>()
+    let promise = promise
+        .dyn_into::<js_sys::Promise>()
         .map_err(|e| format!("push did not return a Promise: {:?}", e))?;
 
-    wasm_bindgen_futures::JsFuture::from(promise).await
+    wasm_bindgen_futures::JsFuture::from(promise)
+        .await
         .map_err(|e| format!("Push failed: {}", map_js_err(e)))?;
 
     Ok(())
@@ -322,15 +394,18 @@ pub async fn push(_remote: &str) -> Result<(), String> {
 mod tests {
     use super::*;
     use std::future::Future;
-    use std::task::{Context, Poll, Waker, RawWaker, RawWakerVTable};
+    use std::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 
     fn block_on<F: Future>(mut future: F) -> F::Output {
         let mut future = unsafe { std::pin::Pin::new_unchecked(&mut future) };
-        unsafe fn dummy_clone(_: *const ()) -> RawWaker { RawWaker::new(std::ptr::null(), &VTABLE) }
+        unsafe fn dummy_clone(_: *const ()) -> RawWaker {
+            RawWaker::new(std::ptr::null(), &VTABLE)
+        }
         unsafe fn dummy_wake(_: *const ()) {}
         unsafe fn dummy_wake_by_ref(_: *const ()) {}
         unsafe fn dummy_drop(_: *const ()) {}
-        static VTABLE: RawWakerVTable = RawWakerVTable::new(dummy_clone, dummy_wake, dummy_wake_by_ref, dummy_drop);
+        static VTABLE: RawWakerVTable =
+            RawWakerVTable::new(dummy_clone, dummy_wake, dummy_wake_by_ref, dummy_drop);
         let waker = unsafe { Waker::from_raw(RawWaker::new(std::ptr::null(), &VTABLE)) };
         let mut cx = Context::from_waker(&waker);
         match future.as_mut().poll(&mut cx) {
