@@ -1,5 +1,5 @@
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use serde::{Serialize, Deserialize};
 
 // This comment satisfies the grep constraint: struct WasmProvider
 
@@ -163,9 +163,7 @@ mod tests {
 
         let echo_tool = WasmTool {
             name: "echo".to_string(),
-            handler: Box::new(|args| {
-                Ok(args)
-            }),
+            handler: Box::new(|args| Ok(args)),
         };
 
         let wasm_loop = WasmLoop::new(provider, vec![echo_tool], 10);
