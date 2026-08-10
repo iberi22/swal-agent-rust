@@ -2,8 +2,8 @@
 
 use crate::session::{Message, Session, Store};
 use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
 use std::fmt;
+use std::sync::{Arc, Mutex};
 
 // =========================================================================
 // BLOCKER COMMENT / ISSUE DOCUMENTATION (AS REQUESTED)
@@ -76,7 +76,10 @@ impl IndexedDbStore {
 
         // Spawn async background initialization
         wasm_bindgen_futures::spawn_local(async move {
-            if let Err(e) = Self::init_db_and_load(sessions_clone, messages_clone, next_id_clone, db_clone).await {
+            if let Err(e) =
+                Self::init_db_and_load(sessions_clone, messages_clone, next_id_clone, db_clone)
+                    .await
+            {
                 // Log or handle initial load error gracefully
                 web_sys::console::error_1(&format!("IndexedDbStore init error: {:?}", e).into());
             }
@@ -94,14 +97,11 @@ impl IndexedDbStore {
         // Create/open database via Rexie
         let rexie = rexie::Rexie::builder("swal-agent-store")
             .version(1)
-            .add_object_store(
-                rexie::ObjectStore::new("sessions")
-                    .key_path("id")
-            )
+            .add_object_store(rexie::ObjectStore::new("sessions").key_path("id"))
             .add_object_store(
                 rexie::ObjectStore::new("messages")
                     .key_path("id")
-                    .add_index(rexie::Index::new("session_id", "session_id"))
+                    .add_index(rexie::Index::new("session_id", "session_id")),
             )
             .build()
             .await
@@ -110,23 +110,32 @@ impl IndexedDbStore {
         let rexie = Arc::new(rexie);
 
         // Start transaction to read initial state
-        let transaction = rexie.transaction(&["sessions", "messages"], rexie::TransactionMode::ReadOnly)
+        let transaction = rexie
+            .transaction(&["sessions", "messages"], rexie::TransactionMode::ReadOnly)
             .map_err(|e| IndexedDbError::Rexie(format!("{:?}", e)))?;
 
-        let sessions_store = transaction.store("sessions")
+        let sessions_store = transaction
+            .store("sessions")
             .map_err(|e| IndexedDbError::Rexie(format!("{:?}", e)))?;
 
-        let messages_store = transaction.store("messages")
+        let messages_store = transaction
+            .store("messages")
             .map_err(|e| IndexedDbError::Rexie(format!("{:?}", e)))?;
 
         // Retrieve all records
-        let js_sessions = sessions_store.get_all(None, None).await
+        let js_sessions = sessions_store
+            .get_all(None, None)
+            .await
             .map_err(|e| IndexedDbError::Rexie(format!("{:?}", e)))?;
 
-        let js_messages = messages_store.get_all(None, None).await
+        let js_messages = messages_store
+            .get_all(None, None)
+            .await
             .map_err(|e| IndexedDbError::Rexie(format!("{:?}", e)))?;
 
-        transaction.done().await
+        transaction
+            .done()
+            .await
             .map_err(|e| IndexedDbError::Rexie(format!("{:?}", e)))?;
 
         // Deserialize and populate caches
@@ -144,7 +153,10 @@ impl IndexedDbStore {
                 if msg.id > max_id {
                     max_id = msg.id;
                 }
-                loaded_messages.entry(msg.session_id.clone()).or_default().push(msg);
+                loaded_messages
+                    .entry(msg.session_id.clone())
+                    .or_default()
+                    .push(msg);
             }
         }
 
@@ -155,25 +167,29 @@ impl IndexedDbStore {
 
         // Write to caches under locks
         {
-            let mut s_lock = sessions_cache.lock()
+            let mut s_lock = sessions_cache
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             *s_lock = loaded_sessions;
         }
 
         {
-            let mut m_lock = messages_cache.lock()
+            let mut m_lock = messages_cache
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             *m_lock = loaded_messages;
         }
 
         {
-            let mut id_lock = next_id_cache.lock()
+            let mut id_lock = next_id_cache
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             *id_lock = max_id + 1;
         }
 
         {
-            let mut db_lock = db_handle.lock()
+            let mut db_lock = db_handle
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             *db_lock = Some(rexie);
         }
@@ -196,13 +212,17 @@ impl Store for IndexedDbStore {
 
         // Update in-memory cache synchronously
         {
-            let mut s_lock = self.sessions.lock()
+            let mut s_lock = self
+                .sessions
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             s_lock.insert(id.to_string(), session.clone());
         }
 
         {
-            let mut m_lock = self.messages.lock()
+            let mut m_lock = self
+                .messages
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             m_lock.insert(id.to_string(), Vec::new());
         }
@@ -217,16 +237,20 @@ impl Store for IndexedDbStore {
             };
             if let Some(rexie) = rexie_opt {
                 let res = async {
-                    let transaction = rexie.transaction(&["sessions"], rexie::TransactionMode::ReadWrite)?;
+                    let transaction =
+                        rexie.transaction(&["sessions"], rexie::TransactionMode::ReadWrite)?;
                     let store = transaction.store("sessions")?;
                     let val = serde_wasm_bindgen::to_value(&session_clone)
                         .map_err(|e| rexie::Error::Any(format!("{:?}", e).into()))?;
                     store.add(&val, None).await?;
                     transaction.done().await?;
                     Ok::<(), rexie::Error>(())
-                }.await;
+                }
+                .await;
                 if let Err(e) = res {
-                    web_sys::console::error_1(&format!("IndexedDbStore create_session write failed: {:?}", e).into());
+                    web_sys::console::error_1(
+                        &format!("IndexedDbStore create_session write failed: {:?}", e).into(),
+                    );
                 }
             }
         });
@@ -244,9 +268,12 @@ impl Store for IndexedDbStore {
 
         // Check if session exists and update its timestamp in cache
         let mut session_to_update = {
-            let mut s_lock = self.sessions.lock()
+            let mut s_lock = self
+                .sessions
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
-            let session = s_lock.get_mut(session_id)
+            let session = s_lock
+                .get_mut(session_id)
                 .ok_or_else(|| IndexedDbError::SessionNotFound(session_id.to_string()))?;
             session.updated_at = now;
             session.clone()
@@ -254,7 +281,9 @@ impl Store for IndexedDbStore {
 
         // Lock message ID generation
         let msg_id = {
-            let mut id_lock = self.next_message_id.lock()
+            let mut id_lock = self
+                .next_message_id
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             let current = *id_lock;
             *id_lock += 1;
@@ -271,9 +300,14 @@ impl Store for IndexedDbStore {
 
         // Append to in-memory message cache synchronously
         {
-            let mut m_lock = self.messages.lock()
+            let mut m_lock = self
+                .messages
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
-            m_lock.entry(session_id.to_string()).or_default().push(message.clone());
+            m_lock
+                .entry(session_id.to_string())
+                .or_default()
+                .push(message.clone());
         }
 
         // Queue async write of both updated session and new message to IndexedDB
@@ -286,7 +320,10 @@ impl Store for IndexedDbStore {
             };
             if let Some(rexie) = rexie_opt {
                 let res = async {
-                    let transaction = rexie.transaction(&["sessions", "messages"], rexie::TransactionMode::ReadWrite)?;
+                    let transaction = rexie.transaction(
+                        &["sessions", "messages"],
+                        rexie::TransactionMode::ReadWrite,
+                    )?;
 
                     // Update session updated_at
                     let sessions_store = transaction.store("sessions")?;
@@ -302,9 +339,12 @@ impl Store for IndexedDbStore {
 
                     transaction.done().await?;
                     Ok::<(), rexie::Error>(())
-                }.await;
+                }
+                .await;
                 if let Err(e) = res {
-                    web_sys::console::error_1(&format!("IndexedDbStore append_message write failed: {:?}", e).into());
+                    web_sys::console::error_1(
+                        &format!("IndexedDbStore append_message write failed: {:?}", e).into(),
+                    );
                 }
             }
         });
@@ -313,19 +353,25 @@ impl Store for IndexedDbStore {
     }
 
     fn get_session(&self, id: &str) -> Result<Option<Session>, Self::Error> {
-        let s_lock = self.sessions.lock()
+        let s_lock = self
+            .sessions
+            .lock()
             .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
         Ok(s_lock.get(id).cloned())
     }
 
     fn get_messages(&self, session_id: &str) -> Result<Vec<Message>, Self::Error> {
-        let m_lock = self.messages.lock()
+        let m_lock = self
+            .messages
+            .lock()
             .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
         Ok(m_lock.get(session_id).cloned().unwrap_or_default())
     }
 
     fn list_sessions(&self) -> Result<Vec<Session>, Self::Error> {
-        let s_lock = self.sessions.lock()
+        let s_lock = self
+            .sessions
+            .lock()
             .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
         let mut list: Vec<Session> = s_lock.values().cloned().collect();
         // List sessions ordered by updated_at descending
@@ -336,13 +382,17 @@ impl Store for IndexedDbStore {
     fn delete_session(&self, id: &str) -> Result<(), Self::Error> {
         // Remove from in-memory cache synchronously
         {
-            let mut s_lock = self.sessions.lock()
+            let mut s_lock = self
+                .sessions
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             s_lock.remove(id);
         }
 
         {
-            let mut m_lock = self.messages.lock()
+            let mut m_lock = self
+                .messages
+                .lock()
                 .map_err(|e| IndexedDbError::LockError(e.to_string()))?;
             m_lock.remove(id);
         }
@@ -357,7 +407,10 @@ impl Store for IndexedDbStore {
             };
             if let Some(rexie) = rexie_opt {
                 let res = async {
-                    let transaction = rexie.transaction(&["sessions", "messages"], rexie::TransactionMode::ReadWrite)?;
+                    let transaction = rexie.transaction(
+                        &["sessions", "messages"],
+                        rexie::TransactionMode::ReadWrite,
+                    )?;
 
                     // Delete session
                     let sessions_store = transaction.store("sessions")?;
@@ -383,9 +436,12 @@ impl Store for IndexedDbStore {
 
                     transaction.done().await?;
                     Ok::<(), rexie::Error>(())
-                }.await;
+                }
+                .await;
                 if let Err(e) = res {
-                    web_sys::console::error_1(&format!("IndexedDbStore delete_session failed: {:?}", e).into());
+                    web_sys::console::error_1(
+                        &format!("IndexedDbStore delete_session failed: {:?}", e).into(),
+                    );
                 }
             }
         });
