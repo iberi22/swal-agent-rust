@@ -95,3 +95,6 @@ async fn test_tool_registry_workflow() {
     let missing_res = registry.execute("subtractor", json!({})).await;
     assert!(matches!(missing_res, Err(ToolError::NotFound(_))));
 }
+
+#[path = "../src/wasm.rs"]
+pub mod wasm_test_module;
