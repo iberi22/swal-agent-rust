@@ -105,10 +105,12 @@ mod tests {
 
     /// Simple block_on implementation for testing async functions without external executor dependency.
     fn block_on<F: std::future::Future>(mut future: F) -> F::Output {
-        use std::task::{Context, RawWaker, RawWakerVTable, Waker};
         use std::pin::Pin;
+        use std::task::{Context, RawWaker, RawWakerVTable, Waker};
 
-        unsafe fn clone(_: *const ()) -> RawWaker { RawWaker::new(std::ptr::null(), &VTABLE) }
+        unsafe fn clone(_: *const ()) -> RawWaker {
+            RawWaker::new(std::ptr::null(), &VTABLE)
+        }
         unsafe fn wake(_: *const ()) {}
         unsafe fn wake_by_ref(_: *const ()) {}
         unsafe fn drop(_: *const ()) {}
@@ -135,7 +137,8 @@ mod tests {
 
         // Serialize to JSON and deserialize back
         let serialized = serde_json::to_string(&transport).expect("Failed to serialize");
-        let deserialized: EdgeMeshTransport = serde_json::from_str(&serialized).expect("Failed to deserialize");
+        let deserialized: EdgeMeshTransport =
+            serde_json::from_str(&serialized).expect("Failed to deserialize");
 
         assert_eq!(transport, deserialized);
         assert_eq!(deserialized.endpoint, "http://localhost:8080");
