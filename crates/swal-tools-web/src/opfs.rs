@@ -68,10 +68,18 @@ extern "C" {
     async fn opfs_get_root() -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(catch)]
-    async fn opfs_get_directory_handle(parent: &JsValue, name: &str, create: bool) -> Result<JsValue, JsValue>;
+    async fn opfs_get_directory_handle(
+        parent: &JsValue,
+        name: &str,
+        create: bool,
+    ) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(catch)]
-    async fn opfs_get_file_handle(parent: &JsValue, name: &str, create: bool) -> Result<JsValue, JsValue>;
+    async fn opfs_get_file_handle(
+        parent: &JsValue,
+        name: &str,
+        create: bool,
+    ) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(catch)]
     async fn opfs_write_file(file_handle: &JsValue, content: &str) -> Result<JsValue, JsValue>;
@@ -99,7 +107,8 @@ fn js_err_to_str(err: JsValue) -> String {
 
 #[cfg(target_arch = "wasm32")]
 async fn traverse_to_parent_dir(path: &str, create: bool) -> Result<(JsValue, String), String> {
-    let parts = path.split('/')
+    let parts = path
+        .split('/')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty() && *s != "." && *s != "..")
         .collect::<Vec<_>>();
@@ -125,7 +134,8 @@ async fn traverse_to_parent_dir(path: &str, create: bool) -> Result<(JsValue, St
 
 #[cfg(target_arch = "wasm32")]
 async fn traverse_to_dir(path: &str) -> Result<JsValue, String> {
-    let parts = path.split('/')
+    let parts = path
+        .split('/')
         .map(|s| s.trim())
         .filter(|s| !s.is_empty() && *s != "." && *s != "..")
         .collect::<Vec<_>>();
@@ -150,7 +160,9 @@ pub async fn read_file(path: &str) -> Result<String, String> {
         .await
         .map_err(js_err_to_str)?;
     let content_val = opfs_read_file(&file_handle).await.map_err(js_err_to_str)?;
-    content_val.as_string().ok_or_else(|| "Failed to convert read content to string".to_string())
+    content_val
+        .as_string()
+        .ok_or_else(|| "Failed to convert read content to string".to_string())
 }
 
 /// Writes content to a file in the Origin Private File System (OPFS).
@@ -160,7 +172,9 @@ pub async fn write_file(path: &str, content: &str) -> Result<(), String> {
     let file_handle = opfs_get_file_handle(&parent_dir, &file_name, true)
         .await
         .map_err(js_err_to_str)?;
-    opfs_write_file(&file_handle, content).await.map_err(js_err_to_str)?;
+    opfs_write_file(&file_handle, content)
+        .await
+        .map_err(js_err_to_str)?;
     Ok(())
 }
 
@@ -169,7 +183,9 @@ pub async fn write_file(path: &str, content: &str) -> Result<(), String> {
 pub async fn list_dir(path: &str) -> Result<Vec<String>, String> {
     let dir_handle = traverse_to_dir(path).await?;
     let names_val = opfs_list_dir(&dir_handle).await.map_err(js_err_to_str)?;
-    let array = names_val.dyn_into::<js_sys::Array>().map_err(|_| "Failed to cast list result to Array".to_string())?;
+    let array = names_val
+        .dyn_into::<js_sys::Array>()
+        .map_err(|_| "Failed to cast list result to Array".to_string())?;
     let mut vec = Vec::with_capacity(array.length() as usize);
     for i in 0..array.length() {
         let val = array.get(i);
@@ -184,7 +200,9 @@ pub async fn list_dir(path: &str) -> Result<Vec<String>, String> {
 #[cfg(target_arch = "wasm32")]
 pub async fn delete_file(path: &str) -> Result<(), String> {
     let (parent_dir, file_name) = traverse_to_parent_dir(path, false).await?;
-    opfs_delete_file(&parent_dir, &file_name).await.map_err(js_err_to_str)?;
+    opfs_delete_file(&parent_dir, &file_name)
+        .await
+        .map_err(js_err_to_str)?;
     Ok(())
 }
 
@@ -227,12 +245,8 @@ mod tests {
         unsafe fn noop_wake_by_ref(_: *const ()) {}
         unsafe fn noop_drop(_: *const ()) {}
 
-        static VTABLE: RawWakerVTable = RawWakerVTable::new(
-            noop_clone,
-            noop_wake,
-            noop_wake_by_ref,
-            noop_drop,
-        );
+        static VTABLE: RawWakerVTable =
+            RawWakerVTable::new(noop_clone, noop_wake, noop_wake_by_ref, noop_drop);
 
         fn noop_raw_waker() -> RawWaker {
             RawWaker::new(std::ptr::null(), &VTABLE)
