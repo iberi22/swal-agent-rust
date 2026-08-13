@@ -1,6 +1,6 @@
 {
   "project": "swal-agent-rust",
-  "description": "Hermes harness clone in Rust — native CLI/TUI + WASM PWA. 37 features (13 W1 + 12 W2 + 12 W3) = 100%.",
+  "description": "Hermes harness clone in Rust \u2014 native CLI/TUI + WASM PWA. 37 features (13 W1 + 12 W2 + 12 W3) = 100%.",
   "gitcore_version": "3.8.0",
   "last_updated": "2026-08-09",
   "wave_weights": {
@@ -144,7 +144,7 @@
     {
       "id": "feat-provider-trait",
       "title": "LLM Provider trait (async)",
-      "description": "Async Provider trait (Message list → ProviderResponse w/ tool_calls) + ProviderError.",
+      "description": "Async Provider trait (Message list \u2192 ProviderResponse w/ tool_calls) + ProviderError.",
       "wave": "wave1",
       "weight": 3,
       "progress_pct": 100,
@@ -237,8 +237,8 @@
     },
     {
       "id": "feat-agent-loop",
-      "title": "AgentLoop (LLM→tools→feedback)",
-      "description": "Conversational loop: prompt→LLM→tool_calls→execute→feedback until final or max_steps.",
+      "title": "AgentLoop (LLM\u2192tools\u2192feedback)",
+      "description": "Conversational loop: prompt\u2192LLM\u2192tool_calls\u2192execute\u2192feedback until final or max_steps.",
       "wave": "wave1",
       "weight": 10,
       "progress_pct": 100,
@@ -257,7 +257,7 @@
       "user_stories": [
         "US-011"
       ],
-      "notes": "PRs #33 (core) + #34 (e2e) merged. AgentLoop LLM→tools→feedback con max_steps.",
+      "notes": "PRs #33 (core) + #34 (e2e) merged. AgentLoop LLM\u2192tools\u2192feedback con max_steps.",
       "last_updated": "2026-08-09"
     },
     {
@@ -308,7 +308,7 @@
     {
       "id": "feat-gateway-http",
       "title": "Gateway HTTP server (axum)",
-      "description": "REST: GET /health, POST /run → runs loop, returns content+steps.",
+      "description": "REST: GET /health, POST /run \u2192 runs loop, returns content+steps.",
       "wave": "wave2",
       "weight": 3,
       "progress_pct": 0,
@@ -328,7 +328,7 @@
     {
       "id": "feat-gateway-ws",
       "title": "Gateway WebSocket server",
-      "description": "WS: client sends task → streams result via AgentHandle.",
+      "description": "WS: client sends task \u2192 streams result via AgentHandle.",
       "wave": "wave2",
       "weight": 2,
       "progress_pct": 0,
@@ -528,7 +528,7 @@
     {
       "id": "feat-xavier-search",
       "title": "Xavier memory search (round-trip)",
-      "description": "POST /v1/memories/search; store→search round-trip test.",
+      "description": "POST /v1/memories/search; store\u2192search round-trip test.",
       "wave": "wave2",
       "weight": 2,
       "progress_pct": 0,
@@ -551,12 +551,12 @@
       "description": "Agent loop compiles to wasm32 without tokio/fs/process; async via wasm-bindgen-futures.",
       "wave": "wave3",
       "weight": 2,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-026"
       ],
@@ -571,12 +571,12 @@
       "description": "Platform-agnostic Tool trait verified building for wasm32 target.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-027"
       ],
@@ -591,12 +591,12 @@
       "description": "File tools backed by Origin Private File System (JS interop).",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-028"
       ],
@@ -611,12 +611,12 @@
       "description": "Git tools via isomorphic-git JS interop (no git2 in browser).",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-029"
       ],
@@ -631,12 +631,12 @@
       "description": "Shell tool via WebContainers bridge; NO subprocess in web.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-030"
       ],
@@ -651,12 +651,12 @@
       "description": "Store trait impl on IndexedDB via rexie; same serde schema.",
       "wave": "wave3",
       "weight": 2,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-031"
       ],
@@ -671,12 +671,12 @@
       "description": "One session/message schema shared by rusqlite and IndexedDB backends.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-032"
       ],
@@ -688,15 +688,15 @@
     {
       "id": "feat-pwa-leptos",
       "title": "Leptos PWA dashboard",
-      "description": "Leptos PWA reusing swal-core types; single Rust codebase → WASM.",
+      "description": "Leptos PWA reusing swal-core types; single Rust codebase \u2192 WASM.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-033"
       ],
@@ -711,12 +711,12 @@
       "description": "Agent loop + WebLLM run in Comlink worker off the main thread.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-034"
       ],
@@ -728,15 +728,15 @@
     {
       "id": "feat-pwa-webllm",
       "title": "WebLLM in-browser inference",
-      "description": "WebLLM (MLC-LLM→WASM+WebGPU) OpenAI-style API; remote fallback.",
+      "description": "WebLLM (MLC-LLM\u2192WASM+WebGPU) OpenAI-style API; remote fallback.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-035"
       ],
@@ -751,12 +751,12 @@
       "description": "SyncEngine with same CRDT/merge logic across native and web.",
       "wave": "wave3",
       "weight": 2,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-036"
       ],
@@ -768,15 +768,15 @@
     {
       "id": "feat-sync-transport",
       "title": "Sync transport (EdgeMesh/WS)",
-      "description": "Transport trait: native→EdgeMesh TCP/QUIC; web→WS/WebRTC relay to xavier.",
+      "description": "Transport trait: native\u2192EdgeMesh TCP/QUIC; web\u2192WS/WebRTC relay to xavier.",
       "wave": "wave3",
       "weight": 1,
-      "progress_pct": 0,
-      "status": "planned",
+      "progress_pct": 100,
+      "status": "stable",
       "implemented_in": "",
       "tests": [],
-      "last_tested": "",
-      "passes": false,
+      "last_tested": "2026-08-13",
+      "passes": true,
       "req_ids": [
         "REQ-037"
       ],

@@ -1,6 +1,9 @@
 use leptos::prelude::*;
 use crate::worker;
 
+#[cfg(target_arch = "wasm32")]
+use swal_store::{indexeddb::IndexedDbStore, session::Store};
+
 /// Message structure for the chat view.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ChatMessage {
@@ -12,7 +15,8 @@ pub struct ChatMessage {
 #[component]
 pub fn App() -> impl IntoView {
     // Reactive signals
-    let (sessions, _set_sessions) = signal(vec![
+    #[allow(unused_variables)]
+    let (sessions, set_sessions) = signal(vec![
         "Session 1".to_string(),
         "Session 2".to_string(),
         "Session 3".to_string(),
@@ -26,6 +30,39 @@ pub fn App() -> impl IntoView {
     ]);
 
     let (input_text, set_input_text) = signal(String::new());
+
+    #[cfg(target_arch = "wasm32")]
+    {
+        let set_sessions_clone = set_sessions.clone();
+        wasm_bindgen_futures::spawn_local(async move {
+            // Briefly delay query to allow background IndexedDbStore cache load to finalize
+            let promise = js_sys::Promise::new(&mut |resolve, _| {
+                if let Some(w) = web_sys::window() {
+                    let _ = w.set_timeout_with_callback_and_timeout_and_arguments_0(&resolve, 150);
+                }
+            });
+            let _ = wasm_bindgen_futures::JsFuture::from(promise).await;
+
+            match IndexedDbStore::open() {
+                Ok(store) => {
+                    match store.list_sessions() {
+                        Ok(list) => {
+                            if !list.is_empty() {
+                                let names: Vec<String> = list.into_iter().map(|s| s.summary).collect();
+                                set_sessions_clone.set(names);
+                            }
+                        }
+                        Err(e) => {
+                            web_sys::console::warn_1(&format!("Failed to list sessions: {:?}", e).into());
+                        }
+                    }
+                }
+                Err(e) => {
+                    web_sys::console::warn_1(&format!("Failed to open IndexedDbStore: {:?}", e).into());
+                }
+            }
+        });
+    }
 
     // Submit handler
     let handle_submit = move |ev: leptos::ev::SubmitEvent| {
@@ -50,6 +87,35 @@ pub fn App() -> impl IntoView {
                     content: format!("Worker output: '{}'", worker_response),
                 });
             });
+
+            #[cfg(target_arch = "wasm32")]
+            {
+                match IndexedDbStore::open() {
+                    Ok(store) => {
+                        let now = std::time::SystemTime::now()
+                            .duration_since(std::time::SystemTime::UNIX_EPOCH)
+                            .unwrap_or_default()
+                            .as_secs();
+                        let session_id = format!("session_{}", now);
+                        let summary = if text.len() > 30 {
+                            format!("{}...", &text[..30])
+                        } else {
+                            text.clone()
+                        };
+                        if let Ok(_sess) = store.create_session(&session_id, &summary) {
+                            let _ = store.append_message(&session_id, "user", &text);
+                            let _ = store.append_message(&session_id, "worker", &worker_response);
+                        }
+                        if let Ok(list) = store.list_sessions() {
+                            let names: Vec<String> = list.into_iter().map(|s| s.summary).collect();
+                            set_sessions.set(names);
+                        }
+                    }
+                    Err(e) => {
+                        web_sys::console::warn_1(&format!("Failed to open IndexedDbStore on submit: {:?}", e).into());
+                    }
+                }
+            }
 
             // Reset input field
             set_input_text.set(String::new());
@@ -96,7 +162,7 @@ pub fn App() -> impl IntoView {
                         on:input=move |ev| set_input_text.set(event_target_value(&ev))
                     />
                     <button type="submit" style="padding: 0.5rem 1rem; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                        "Send"
+                        "Run"
                     </button>
                 </form>
             </main>
