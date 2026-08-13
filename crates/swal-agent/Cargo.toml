@@ -10,6 +10,8 @@ description = "TUI/CLI entry: wires gestalt state, skills cache, starts loop/gat
 swal-core = { path = "../swal-core" }
 swal-loop = { path = "../swal-loop" }
 swal-store = { path = "../swal-store" }
+swal-gateway = { path = "../swal-gateway" }
+swal-sched = { path = "../swal-sched" }
 gestalt_core = { workspace = true }
 synapse-agentic = { workspace = true }
 serde = { version = "1.0", features = ["derive"] }
